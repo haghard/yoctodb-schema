@@ -1,1 +1,1 @@
-### Typed schema for yoctodb
+### Typed schema for [yoctodb](https://github.com/yandex/yoctodb)    
