@@ -15,7 +15,6 @@ import java.nio.file.Paths
 import java.time.Instant
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
-import scala.collection.immutable.Vector
 
 import GamesIndex._
 
@@ -32,7 +31,7 @@ object Example extends App with StrictLogging {
     if (indexFile.exists && indexFile.isFile) {
       val reader = DatabaseFormat.getCurrent.getDatabaseReader
       val db     = reader.from(Buffer.mmap(indexFile, false))
-      logger.warn(s"* * * Index size: ${indexFile.length() / (1024 * 1024)} MB  * * *")
+      logger.warn("* * * Index size: {} MB  * * *", indexFile.length() / (1024 * 1024))
       logger.warn("* * * Docs number: {} * * *", db.getDocumentCount)
       Right(db)
     } else Left(s"Couldn't find or open file $indexPath")
@@ -42,13 +41,12 @@ object Example extends App with StrictLogging {
     yoctoDb.execute(
       yoctoQuery,
       (docId: Int, _: Database) ⇒ {
-
         //val payload: com.yandex.yoctodb.util.buf.Buffer = yoctoDb.getFieldValue(docId, InfoColumnName)
         //val result                                      = new String(payload.toByteArray)
 
-        val payload: com.yandex.yoctodb.util.buf.Buffer = yoctoDb.getFieldValue(docId, PayloadColumnName)
-        val result                                      = NbaResultPB.parseFrom(new com.yandex.yoctodb.util.buf.BufferInputStream(payload))
-        val when                                        = tzFormatter.format(ZonedDateTime.ofInstant(Instant.ofEpochMilli(result.when), EasternTime))
+        val payload: Buffer = yoctoDb.getFieldValue(docId, PayloadColumnName)
+        val result          = NbaResultPB.parseFrom(new com.yandex.yoctodb.util.buf.BufferInputStream(payload))
+        val when            = tzFormatter.format(ZonedDateTime.ofInstant(Instant.ofEpochMilli(result.when), EasternTime))
         logger.debug(s"DocId: $docId")
         logger.debug(s"When: $when")
         logger.debug(result.toProtoString)
@@ -61,15 +59,15 @@ object Example extends App with StrictLogging {
     loadIndex() match {
       case Left(err) ⇒ throw new Exception(err)
       case Right(yoctoDb) ⇒
-        val filteredSchema: SchemaColumn[ColumnOps[_]] = rawFilterableSchema(filterableProtoc)
-        val sortedSchema: SchemaColumn[ColumnOps[_]]   = rawSortableSchema(sortableProtoc)
+        val FilterableSchema: Column[ColumnOps[_]] = rawFilterableSchema(filterableProtoc)
+        val sortableSchema: Column[ColumnOps[_]]   = rawSortableSchema(sortableProtoc)
 
-        logger.info("Filtered: {}", filteredSchema.columnNames.mkString(","))
-        logger.info("Sorted: {}", sortedSchema.columnNames.mkString(","))
+        logger.info("Filterable: {} eq {}", FilterableSchema, FilterableSchema.equals(Filterable))
+        logger.info("Sortable: {} eq {}", sortableSchema, sortableSchema.equals(Sortable))
 
-        val yoctoQuery = sortedSchema.orderBy { phantomSchema ⇒
-          val gameTime = phantomSchema.rawColumn[GameTime].term
-          filteredSchema
+        val yoctoQuery = sortableSchema.orderBy { rawSchema ⇒
+          val gameTime = rawSchema.rawColumn[GameTime].term
+          FilterableSchema
             .where { schema ⇒
               val stage    = schema.rawColumn[FullStage].term
               val homeTeam = schema.rawColumn[HomeTeam].term
@@ -77,7 +75,7 @@ object Example extends App with StrictLogging {
 
               yocto.select.where(
                 yocto.and(
-                  stage.in$(Vector("season-20-21")),
+                  stage.in$(Set("season-20-21")),
                   yocto.or(
                     yocto.and(awayTeam.eq$("lal"), homeTeam.eq$("gsw")),
                     yocto.and(awayTeam.eq$("gsw"), homeTeam.eq$("lal"))
@@ -98,11 +96,13 @@ object Example extends App with StrictLogging {
         exec(yoctoDb, yoctoQuery)
     }
 
-  def runValidated(): Unit =
-    if (
-      validate(filterableProtoc, Filterable.columnNames) &&
-      validate(sortableProtoc, Sortable.columnNames)
-    ) {
+  def runValidated(): Unit = {
+    val errors = List(
+      validate(filterableProtoc, Filterable.columns, "Filterable"),
+      validate(sortableProtoc, Sortable.columns, "Sortable")
+    ).collect { case Some(err) ⇒ err }
+
+    if (errors.isEmpty) {
       loadIndex() match {
         case Left(err) ⇒ throw new Exception(err)
         case Right(yoctoDb) ⇒
@@ -118,7 +118,7 @@ object Example extends App with StrictLogging {
 
                 yocto.select.where(
                   yocto.and(
-                    stage.in$(Vector("season-20-21")),
+                    stage.in$(Set("season-20-21")),
                     yocto.or(
                       yocto.and(awayTeam.eq$("lal"), homeTeam.eq$("gsw")),
                       yocto.and(awayTeam.eq$("gsw"), homeTeam.eq$("lal"))
@@ -131,8 +131,9 @@ object Example extends App with StrictLogging {
           }
           exec(yoctoDb, yoctoQuery)
       }
-    } else throw new Exception("Schema mismatch !")
+    } else throw new Exception(s"Schema mismatch: ${errors.mkString(",")}")
+  }
 
   runValidated()
-  //runRaw()
+  runRaw()
 }

@@ -51,7 +51,7 @@
     <root level="DEBUG">
         <!--<appender-ref ref="asyncFile"/>-->
         <!--<appender-ref ref="asyncSizeBasedFile"/>-->
-        <appender-ref ref="asyncTimeBasedFile"/>
+        <!--<appender-ref ref="asyncTimeBasedFile"/>-->
         <appender-ref ref="asyncConsole"/>
     </root>
 

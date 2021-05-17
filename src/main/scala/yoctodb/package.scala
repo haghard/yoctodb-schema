@@ -4,14 +4,14 @@
 
 package object yoctodb {
 
-  val EmptyName = "empty"
+  val EmptyColumn = "empty"
 
-  trait Column[A <: Column[A]] { self: A ⇒
-    def +[B <: Any](b: B): A * b.type                                = new *(self, b)
-    def +[B <: Column[B]](b: B)(implicit ev: B <:< Column[B]): A * B = new *(self, b)
+  trait ProtocColumn[A <: ProtocColumn[A]] { self: A ⇒
+    def +[B <: Any](b: B): A * b.type                                            = new *(self, b)
+    def +[B <: ProtocColumn[B]](b: B)(implicit ev: B <:< ProtocColumn[B]): A * B = new *(self, b)
   }
 
-  final case class *[A, B](a: A, b: B) extends Column[A * B] {
+  final case class *[A, B](a: A, b: B) extends ProtocColumn[A * B] {
     override val toString: String = s"($a + $b)"
   }
 
@@ -29,7 +29,7 @@ package object yoctodb {
 
   trait SetOps[T] extends TermOps[T] {
 
-    def in$(vs: scala.collection.immutable.Vector[T]): com.yandex.yoctodb.query.TermCondition
+    def in$(vs: scala.collection.immutable.Set[T]): com.yandex.yoctodb.query.TermCondition
   }
 
   trait Inequality[T] extends FilterableOps[T] with SetOps[T]
