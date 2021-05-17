@@ -59,15 +59,15 @@ object Example extends App with StrictLogging {
     loadIndex() match {
       case Left(err) ⇒ throw new Exception(err)
       case Right(yoctoDb) ⇒
-        val FilterableSchema: Column[ColumnOps[_]] = rawFilterableSchema(filterableProtoc)
+        val filterableSchema: Column[ColumnOps[_]] = rawFilterableSchema(filterableProtoc)
         val sortableSchema: Column[ColumnOps[_]]   = rawSortableSchema(sortableProtoc)
 
-        logger.info("Filterable: {} eq {}", FilterableSchema, FilterableSchema.equals(Filterable))
+        logger.info("Filterable: {} eq {}", filterableSchema, filterableSchema.equals(Filterable))
         logger.info("Sortable: {} eq {}", sortableSchema, sortableSchema.equals(Sortable))
 
         val yoctoQuery = sortableSchema.orderBy { rawSchema ⇒
           val gameTime = rawSchema.rawColumn[GameTime].term
-          FilterableSchema
+          filterableSchema
             .where { schema ⇒
               val stage    = schema.rawColumn[FullStage].term
               val homeTeam = schema.rawColumn[HomeTeam].term
@@ -97,6 +97,7 @@ object Example extends App with StrictLogging {
     }
 
   def runValidated(): Unit = {
+
     val errors = List(
       validate(filterableProtoc, Filterable.columns, "Filterable"),
       validate(sortableProtoc, Sortable.columns, "Sortable")
