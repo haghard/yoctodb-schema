@@ -20,7 +20,7 @@ import GamesIndex._
 
 //runMain yoctodb.Example
 object Example extends App with StrictLogging {
-  val indexPath = "indices/games"
+  val indexPath = "indexes/games"
 
   val tzFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss Z")
   val EasternTime = java.time.ZoneId.of("America/New_York") //UTC-4
