@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+import "scalapb/scalapb.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/any.proto";
+
+package yoctodb.schema.games.v1;
+
+option (scalapb.options) = {
+    single_file: true
+    flat_package: true
+    preserve_unknown_fields: false
+    lenses: false
+};
+
+message GamesSchema {
+
+    message games_stage {
+      FieldType type=1;
+      IndexType indexType=2;
+    }
+
+    message games_at {
+      FieldType type=1;
+      IndexType indexType=2;
+    }
+
+    message games_ht {
+      FieldType type=1;
+      IndexType indexType=2;
+    }
+
+    message games_ts {
+      FieldType type=1;
+      IndexType indexType=2;
+    }
+
+    message games_winner {
+      FieldType type=1;
+      IndexType indexType=2;
+    }
+
+    //all fields in the index
+    oneof index {
+      games_stage gamesStage = 1;
+      games_at gamesAt = 2;
+      games_ht gamesHt = 3;
+      games_ts gamesTs = 4;
+      games_winner gamesWinner = 5;
+    }
+
+    enum IndexType {
+      Filterable  = 0;
+      Sortable  = 1;
+      //Full=3;
+      //Stored=4;
+    }
+
+    enum FieldType {
+      Str = 0;
+      Integer = 1;
+      Dbl = 2;
+      Lng = 3;
+      Bytes = 4;
+    }
+}
+
+message NbaResultPB {
+  string homeTeam = 1;
+  int32 homeScore = 2;
+  string awayTeam = 3;
+  int32 awayScore = 4;
+  int64 when = 5;
+  string homeScoreLine = 6;
+  string awayScoreLine = 7;
+}
