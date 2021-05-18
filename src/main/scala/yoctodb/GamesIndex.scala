@@ -22,30 +22,23 @@ object GamesIndex {
   val PayloadColumnName = "g_payload"
   val InfoColumnName    = "g_info"
 
-  trait Games  extends ProtocColumn[Games]
-  object Games extends Games
+  private val stage                                = Index.Stage(games_stage(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable))
+  private val awayTeam                             = Index.AwayTeam(games_at(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable))
+  private val homeTeam                             = Index.HomeTeam(games_ht(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable))
+  private val winner                               = Index.Winner(games_winner(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable))
+  private val year                                 = Index.Year(games_yy(GamesSchema.FieldType.Integer, GamesSchema.IndexType.Both))
+  private val month                                = Index.Month(games_mm(GamesSchema.FieldType.Integer, GamesSchema.IndexType.Both))
+  private val day                                  = Index.Day(games_dd(GamesSchema.FieldType.Integer, GamesSchema.IndexType.Both))
+  private val time                                 = Index.Time(games_ts(GamesSchema.FieldType.Lng, GamesSchema.IndexType.Sortable))
+  private val IndexColumns: Set[GamesSchema.Index] = Set(stage, homeTeam, awayTeam, winner, year, month, day, time)
 
-  val stage    = Index.Stage(games_stage(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable))
-  val awayTeam = Index.AwayTeam(games_at(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable))
-  val homeTeam = Index.HomeTeam(games_ht(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable))
-  val winner   = Index.Winner(games_winner(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable))
-  val year     = Index.Year(games_yy(GamesSchema.FieldType.Integer, GamesSchema.IndexType.Both))
-  val month    = Index.Month(games_mm(GamesSchema.FieldType.Integer, GamesSchema.IndexType.Both))
-  val day      = Index.Day(games_dd(GamesSchema.FieldType.Integer, GamesSchema.IndexType.Both))
-  val time     = Index.Time(games_ts(GamesSchema.FieldType.Lng, GamesSchema.IndexType.Sortable))
-
-  //Protoc filterable games schema as a value
-  val filterableProtoc = Games + stage + awayTeam + homeTeam + winner + year + month + day
-
-  //Protoc sortable games schema as a value
-  val sortableProtoc = Games + time + year + month + day
-
-  //Precisely defined schemas as a values
+  //Precisely defined filterable schema as a value
   val Filterable =
     Column(FullStage()) ++ Column(AwayTeam()) ++ Column(HomeTeam()) ++ Column(GameWinner()) ++ Column(Year()) ++ Column(
       Month()
     ) ++ Column(Day())
 
+  //Sortable schema as a value
   val Sortable = Column(GameTime()) ++ Column(Year()) ++ Column(Month()) ++ Column(Day())
 
   //**************************************************************************************************************/
@@ -127,87 +120,17 @@ object GamesIndex {
     val term = EmptyTermOps
   }
 
-  def validate[T](exp: T, columnNames: Set[String], pref: String): Option[String] = {
-    def parse(ind: GamesSchema.Index, acc: Set[String]): Set[String] = ind match {
-      case Index.Stage(v)    ⇒ acc - v.companion.scalaDescriptor.name
-      case Index.AwayTeam(v) ⇒ acc - v.companion.scalaDescriptor.name
-      case Index.HomeTeam(v) ⇒ acc - v.companion.scalaDescriptor.name
-      case Index.Time(v)     ⇒ acc - v.companion.scalaDescriptor.name
-      case Index.Winner(v)   ⇒ acc - v.companion.scalaDescriptor.name
-      case Index.Year(v)     ⇒ acc - v.companion.scalaDescriptor.name
-      case Index.Month(v)    ⇒ acc - v.companion.scalaDescriptor.name
-      case Index.Day(v)      ⇒ acc - v.companion.scalaDescriptor.name
-      case Index.Empty       ⇒ acc - EmptyColumn
-    }
-    def go[T](exp: T, acc: Set[String]): Set[String] =
-      exp match {
-        case Games                  ⇒ acc
-        case a * b                  ⇒ go(b, go(a, acc))
-        case ind: GamesSchema.Index ⇒ parse(ind, acc)
-      }
-    val r = go(exp, columnNames)
-    if (r.isEmpty) None else Some(s"$pref columns [${r.mkString(",")}] are missed.")
-  }
+  /** In order to declare this index as "safe to use" all fields from `columnsFromSchema` should be
+    * presented in `columnsFromIndex`
+    */
+  def checkIndexAgainstSchema(
+    columnsFromIndex: Set[String],
+    columnFromSchema: Set[String]
+  ): Boolean = columnFromSchema.foldLeft(true)((flag, e) ⇒ flag & columnsFromIndex.contains(e))
 
-  def rawFilterableSchema[T](
-    exp: T,
-    acc: Column[ColumnOps[_]] = Column(Empty(GamesSchema.Index.Empty)).narrow
-  ): Column[ColumnOps[_]] =
-    exp match {
-      case Games ⇒ acc
-      case a * b ⇒ rawFilterableSchema(a, acc) ++ rawFilterableSchema(b, acc)
-      case ind: GamesSchema.Index ⇒
-        ind match {
-          case v: Index.Stage ⇒
-            if (v.value.indexType.isBoth | v.value.indexType.isFilterable) acc ++ Column(FullStage(v)).narrow else acc
-          case v: Index.AwayTeam ⇒
-            if (v.value.indexType.isBoth | v.value.indexType.isFilterable) acc ++ Column(AwayTeam(v)).narrow else acc
-          case v: Index.HomeTeam ⇒
-            if (v.value.indexType.isBoth | v.value.indexType.isFilterable) acc ++ Column(HomeTeam(v)).narrow else acc
-          case v: Index.Time ⇒
-            if (v.value.indexType.isBoth | v.value.indexType.isFilterable) acc ++ Column(GameTime(v)).narrow else acc
-          case v: Index.Winner ⇒
-            if (v.value.indexType.isBoth | v.value.indexType.isFilterable) acc ++ Column(GameWinner(v)).narrow else acc
-          case v: Index.Year ⇒
-            if (v.value.indexType.isBoth | v.value.indexType.isFilterable) acc ++ Column(Year(v)).narrow else acc
-          case v: Index.Month ⇒
-            if (v.value.indexType.isBoth | v.value.indexType.isFilterable) acc ++ Column(Month(v)).narrow else acc
-          case v: Index.Day ⇒
-            if (v.value.indexType.isBoth | v.value.indexType.isFilterable) acc ++ Column(Day(v)).narrow else acc
-          case Index.Empty ⇒ acc
-        }
-    }
-
-  def rawSortableSchema[T](
-    exp: T,
-    acc: Column[ColumnOps[_]] = Column(Empty(GamesSchema.Index.Empty)).narrow
-  ): Column[ColumnOps[_]] =
-    exp match {
-      case Games ⇒ acc
-      case a * b ⇒ rawSortableSchema(a, acc) ++ rawSortableSchema(b, acc)
-      case ind: GamesSchema.Index ⇒
-        ind match {
-          case v: Index.Stage ⇒
-            if (v.value.indexType.isBoth | v.value.indexType.isSortable) acc ++ Column(FullStage(v)).narrow else acc
-          case v: Index.AwayTeam ⇒
-            if (v.value.indexType.isBoth | v.value.indexType.isSortable) acc ++ Column(AwayTeam(v)).narrow else acc
-          case v: Index.HomeTeam ⇒
-            if (v.value.indexType.isBoth | v.value.indexType.isSortable) acc ++ Column(HomeTeam(v)).narrow else acc
-          case v: Index.Time ⇒
-            if (v.value.indexType.isBoth | v.value.indexType.isSortable) acc ++ Column(GameTime(v)).narrow else acc
-          case v: Index.Winner ⇒
-            if (v.value.indexType.isBoth | v.value.indexType.isSortable) acc ++ Column(GameWinner(v)).narrow else acc
-          case v: Index.Year ⇒
-            if (v.value.indexType.isBoth | v.value.indexType.isSortable) acc ++ Column(Year(v)).narrow else acc
-          case v: Index.Month ⇒
-            if (v.value.indexType.isBoth | v.value.indexType.isSortable) acc ++ Column(Month(v)).narrow else acc
-          case v: Index.Day ⇒
-            if (v.value.indexType.isBoth | v.value.indexType.isSortable) acc ++ Column(Day(v)).narrow else acc
-          case Index.Empty ⇒ acc
-        }
-    }
-
-  def printSchema[T](exp: T): String = {
+  def printSchema(
+    columnsFromIndex: Set[String]
+  ): String = {
     def indType(indexType: GamesSchema.IndexType) =
       indexType match {
         case IndexType.Filterable      ⇒ "Filterable"
@@ -226,31 +149,42 @@ object GamesIndex {
         case FieldType.Unrecognized(_) ⇒ "Unrecognized"
       }
 
-    def parseIndexField(field: GamesSchema.Index) =
-      field match {
-        case Index.Stage(v) ⇒
-          "[" + v.companion.scalaDescriptor.name + ":" + fieldType(v.`type`) + ":" + indType(v.indexType) + "]"
-        case Index.AwayTeam(v) ⇒
-          "[" + v.companion.scalaDescriptor.name + ":" + fieldType(v.`type`) + ":" + indType(v.indexType) + "]"
-        case Index.HomeTeam(v) ⇒
-          "[" + v.companion.scalaDescriptor.name + ":" + fieldType(v.`type`) + ":" + indType(v.indexType) + "]"
-        case Index.Time(v) ⇒
-          "[" + v.companion.scalaDescriptor.name + ":" + fieldType(v.`type`) + ":" + indType(v.indexType) + "]"
-        case Index.Winner(v) ⇒
-          "[" + v.companion.scalaDescriptor.name + ":" + fieldType(v.`type`) + ":" + indType(v.indexType) + "]"
-        case Index.Year(v) ⇒
-          "[" + v.companion.scalaDescriptor.name + ":" + fieldType(v.`type`) + ":" + indType(v.indexType) + "]"
-        case Index.Month(v) ⇒
-          "[" + v.companion.scalaDescriptor.name + ":" + fieldType(v.`type`) + ":" + indType(v.indexType) + "]"
-        case Index.Day(v) ⇒
-          "[" + v.companion.scalaDescriptor.name + ":" + fieldType(v.`type`) + ":" + indType(v.indexType) + "]"
-        case Index.Empty ⇒ EmptyColumn
+    columnsFromIndex
+      .map { name ⇒
+        IndexColumns
+          .find { i ⇒
+            i match {
+              case Index.Stage(v)    ⇒ v.companion.scalaDescriptor.name == name
+              case Index.AwayTeam(v) ⇒ v.companion.scalaDescriptor.name == name
+              case Index.HomeTeam(v) ⇒ v.companion.scalaDescriptor.name == name
+              case Index.Time(v)     ⇒ v.companion.scalaDescriptor.name == name
+              case Index.Winner(v)   ⇒ v.companion.scalaDescriptor.name == name
+              case Index.Year(v)     ⇒ v.companion.scalaDescriptor.name == name
+              case Index.Month(v)    ⇒ v.companion.scalaDescriptor.name == name
+              case Index.Day(v)      ⇒ v.companion.scalaDescriptor.name == name
+            }
+          }
+          .map {
+            case Index.Stage(v) ⇒
+              "[" + v.companion.scalaDescriptor.name + ":" + fieldType(v.`type`) + ":" + indType(v.indexType) + "]"
+            case Index.AwayTeam(v) ⇒
+              "[" + v.companion.scalaDescriptor.name + ":" + fieldType(v.`type`) + ":" + indType(v.indexType) + "]"
+            case Index.HomeTeam(v) ⇒
+              "[" + v.companion.scalaDescriptor.name + ":" + fieldType(v.`type`) + ":" + indType(v.indexType) + "]"
+            case Index.Time(v) ⇒
+              "[" + v.companion.scalaDescriptor.name + ":" + fieldType(v.`type`) + ":" + indType(v.indexType) + "]"
+            case Index.Winner(v) ⇒
+              "[" + v.companion.scalaDescriptor.name + ":" + fieldType(v.`type`) + ":" + indType(v.indexType) + "]"
+            case Index.Year(v) ⇒
+              "[" + v.companion.scalaDescriptor.name + ":" + fieldType(v.`type`) + ":" + indType(v.indexType) + "]"
+            case Index.Month(v) ⇒
+              "[" + v.companion.scalaDescriptor.name + ":" + fieldType(v.`type`) + ":" + indType(v.indexType) + "]"
+            case Index.Day(v) ⇒
+              "[" + v.companion.scalaDescriptor.name + ":" + fieldType(v.`type`) + ":" + indType(v.indexType) + "]"
+          }
       }
-
-    exp match {
-      case Games                  ⇒ IndexName
-      case *(a, b)                ⇒ printSchema(a) + ", " + printSchema(b)
-      case ind: GamesSchema.Index ⇒ parseIndexField(ind)
-    }
+      .flatten
+      .mkString("\n")
   }
+
 }

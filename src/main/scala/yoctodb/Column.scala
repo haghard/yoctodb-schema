@@ -17,7 +17,7 @@ final case class Column[+A <: ColumnOps[_]] private (
 
   def narrow = self.asInstanceOf[Column[A]]
 
-  override def toString: String = s"ColumnSchema(${columns.mkString(",")})"
+  override def toString: String = s"Schema(${columns.mkString(",")})"
 
   override def equals(obj: Any): Boolean = obj match {
     case that: Column[_] ⇒ columns.equals(that.columns)
@@ -72,7 +72,7 @@ trait ColumnOps[A] {
 
   def name: String = parse(index)
 
-  private def parse(ind: GamesSchema.Index) = ind match {
+  private def parse(ind: GamesSchema.Index): String = ind match {
     case Index.Stage(v)    ⇒ v.companion.scalaDescriptor.name
     case Index.AwayTeam(v) ⇒ v.companion.scalaDescriptor.name
     case Index.HomeTeam(v) ⇒ v.companion.scalaDescriptor.name

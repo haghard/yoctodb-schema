@@ -40,12 +40,17 @@ lazy val commonSettings = scalacSettings ++ Seq(
   ))
 )
 
+unmanagedBase := baseDirectory.value / "lib"
+
 libraryDependencies ++= Seq(
   "dev.zio" %% "izumi-reflect" % "1.1.1",
   "com.typesafe" % "config" % "1.4.1",
   "com.typesafe.scala-logging" %% "scala-logging" % "3.9.3",
   "ch.qos.logback" % "logback-classic" % "1.2.3",
-  "com.yandex.yoctodb" % "yoctodb-core" % "0.0.19",
+  //"com.yandex.yoctodb" % "yoctodb-core" % "0.0.19",
+
+  "com.google.guava" % "guava" % "18.0",
+  "com.yandex.yoctodb" % "yoctodb-core" % "0.0.20" from s"file:///${unmanagedBase.value.getAbsolutePath}/yoctodb-core-0.0.20.jar",
 
   "com.thesamet.scalapb" %% "scalapb-runtime" % scalapb.compiler.Version.scalapbVersion % "protobuf"
 

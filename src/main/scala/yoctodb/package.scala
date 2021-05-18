@@ -6,15 +6,6 @@ package object yoctodb {
 
   val EmptyColumn = "empty"
 
-  trait ProtocColumn[A <: ProtocColumn[A]] { self: A ⇒
-    def +[B <: Any](b: B): A * b.type                                            = new *(self, b)
-    def +[B <: ProtocColumn[B]](b: B)(implicit ev: B <:< ProtocColumn[B]): A * B = new *(self, b)
-  }
-
-  final case class *[A, B](a: A, b: B) extends ProtocColumn[A * B] {
-    override val toString: String = s"($a + $b)"
-  }
-
   sealed trait TermOps[T]
 
   object EmptyTermOps extends TermOps[Nothing]
