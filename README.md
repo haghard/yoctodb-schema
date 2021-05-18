@@ -1,1 +1,12 @@
-### Typed schema for [yoctodb](https://github.com/yandex/yoctodb)    
+# yoctodb-schema #
+
+### Typed schema for [yoctodb](https://github.com/yandex/yoctodb)
+
+## Motivation
+
+TODO
+
+
+## License
+
+This code is open source software licensed under the [Apache 2.0 License](http://www.apache.org/licenses/LICENSE-2.0.html).

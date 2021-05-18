@@ -28,14 +28,14 @@ final case class Column[+A <: ColumnOps[_]] private (
 object Column {
 
   def apply[A <: ColumnOps[_]](value: A)(implicit tag: Tag[A]): Column[A] =
-    new Column(Map(tag → value), Set(value.fieldName))
+    new Column(Map(tag → value), Set(value.name))
 
   /** Column[A] <: Column[_]
     * Column[A] with Column[B] <: Column[_]
     * Column[A] with Column[B] <: Column[A]
     * Column[A] with Column[B] <: Column[B]
     *
-    * Column[ColumnOps[A]] <: Column[ColumnOps[_]]
+    * Column[Time] <: Column[ColumnOps[_]]
     * Column[Time] with Column[Day] <: Column[ColumnOps[_]]
     * Column[Time] with Column[Day] <: Column[Time]
     * Column[Time] with Column[Day] <: Column[Day]
@@ -68,9 +68,9 @@ trait ColumnOps[A] {
 
   def index: GamesSchema.Index
 
-  def fieldName: String = parse(index)
-
   def term: TermOps[A]
+
+  def name: String = parse(index)
 
   private def parse(ind: GamesSchema.Index) = ind match {
     case Index.Stage(v)    ⇒ v.companion.scalaDescriptor.name

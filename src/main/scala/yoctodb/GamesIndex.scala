@@ -51,75 +51,75 @@ object GamesIndex {
   //**************************************************************************************************************/
   final case class FullStage(index: GamesSchema.Index = stage) extends ColumnOps[String] {
     val term = new Inequality[String] {
-      override def eq$(stageName: String)   = equal(fieldName, from(stageName))
-      override def in$(stages: Set[String]) = in(fieldName, stages.map(from(_)).toSeq: _*)
+      override def eq$(stageName: String)   = equal(name, from(stageName))
+      override def in$(stages: Set[String]) = in(name, stages.map(from(_)).toSeq: _*)
     }
   }
 
   final case class AwayTeam(index: GamesSchema.Index = awayTeam) extends ColumnOps[String] {
     val term = new Inequality[String] {
-      override def eq$(team: String)       = equal(fieldName, from(team))
-      override def in$(teams: Set[String]) = in(fieldName, teams.map(from(_)).toSeq: _*)
+      override def eq$(team: String)       = equal(name, from(team))
+      override def in$(teams: Set[String]) = in(name, teams.map(from(_)).toSeq: _*)
     }
   }
 
   final case class HomeTeam(index: GamesSchema.Index = homeTeam) extends ColumnOps[String] {
     val term = new Inequality[String] {
-      def eq$(team: String)       = equal(fieldName, from(team))
-      def in$(teams: Set[String]) = in(fieldName, teams.map(from(_)).toSeq: _*)
+      def eq$(team: String)       = equal(name, from(team))
+      def in$(teams: Set[String]) = in(name, teams.map(from(_)).toSeq: _*)
     }
   }
 
   final case class Year(index: GamesSchema.Index = year) extends ColumnOps[Int] {
     val term = new NumericOps[Int] with SortableOps[Int] {
-      def gt$(yy: Int)         = gt(fieldName, from(yy))
-      def gte$(yy: Int)        = gte(fieldName, from(yy))
-      def lt$(yy: Int)         = lt(fieldName, from(yy))
-      def lte$(yy: Int)        = lte(fieldName, from(yy))
-      def eq$(yy: Int)         = equal(fieldName, from(yy))
-      def in$(years: Set[Int]) = in(fieldName, years.map(from(_)).toSeq: _*)
-      def descOrd: Order       = desc(fieldName)
-      def ascOrd: Order        = asc(fieldName)
+      def gt$(yy: Int)         = gt(name, from(yy))
+      def gte$(yy: Int)        = gte(name, from(yy))
+      def lt$(yy: Int)         = lt(name, from(yy))
+      def lte$(yy: Int)        = lte(name, from(yy))
+      def eq$(yy: Int)         = equal(name, from(yy))
+      def in$(years: Set[Int]) = in(name, years.map(from(_)).toSeq: _*)
+      def descOrd: Order       = desc(name)
+      def ascOrd: Order        = asc(name)
     }
   }
 
   final case class Month(index: GamesSchema.Index = month) extends ColumnOps[Int] {
     val term = new NumericOps[Int] with SortableOps[Int] {
-      def gt$(month: Int)       = gt(fieldName, from(month))
-      def gte$(month: Int)      = gte(fieldName, from(month))
-      def lt$(month: Int)       = lt(fieldName, from(month))
-      def lte$(month: Int)      = lte(fieldName, from(month))
-      def eq$(month: Int)       = equal(fieldName, from(month))
-      def in$(months: Set[Int]) = in(fieldName, months.map(from(_)).toSeq: _*)
-      def descOrd: Order        = desc(fieldName)
-      def ascOrd: Order         = asc(fieldName)
+      def gt$(month: Int)       = gt(name, from(month))
+      def gte$(month: Int)      = gte(name, from(month))
+      def lt$(month: Int)       = lt(name, from(month))
+      def lte$(month: Int)      = lte(name, from(month))
+      def eq$(month: Int)       = equal(name, from(month))
+      def in$(months: Set[Int]) = in(name, months.map(from(_)).toSeq: _*)
+      def descOrd: Order        = desc(name)
+      def ascOrd: Order         = asc(name)
     }
   }
 
   final case class Day(index: GamesSchema.Index = day) extends ColumnOps[Int] {
     val term = new NumericOps[Int] with SortableOps[Int] {
-      def gt$(day: Int)       = gt(fieldName, from(day))
-      def gte$(day: Int)      = gte(fieldName, from(day))
-      def lt$(day: Int)       = lt(fieldName, from(day))
-      def lte$(day: Int)      = lte(fieldName, from(day))
-      def eq$(day: Int)       = equal(fieldName, from(day))
-      def in$(days: Set[Int]) = in(fieldName, days.map(from(_)).toSeq: _*)
-      def descOrd: Order      = desc(fieldName)
-      def ascOrd: Order       = asc(fieldName)
+      def gt$(day: Int)       = gt(name, from(day))
+      def gte$(day: Int)      = gte(name, from(day))
+      def lt$(day: Int)       = lt(name, from(day))
+      def lte$(day: Int)      = lte(name, from(day))
+      def eq$(day: Int)       = equal(name, from(day))
+      def in$(days: Set[Int]) = in(name, days.map(from(_)).toSeq: _*)
+      def descOrd: Order      = desc(name)
+      def ascOrd: Order       = asc(name)
     }
   }
 
   final case class GameWinner(index: GamesSchema.Index = winner) extends ColumnOps[String] {
     val term = new Inequality[String] {
-      def eq$(team: String)       = equal(fieldName, from(team))
-      def in$(teams: Set[String]) = in(fieldName, teams.map(from(_)).toSeq: _*)
+      def eq$(team: String)       = equal(name, from(team))
+      def in$(teams: Set[String]) = in(name, teams.map(from(_)).toSeq: _*)
     }
   }
 
   final case class GameTime(index: GamesSchema.Index = time) extends ColumnOps[Long] {
     val term = new SortableOps[Long] {
-      val descOrd = desc(fieldName)
-      val ascOrd  = asc(fieldName)
+      val descOrd = desc(name)
+      val ascOrd  = asc(name)
     }
   }
 

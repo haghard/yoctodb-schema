@@ -6,6 +6,7 @@ lazy val scalacSettings = Seq(
   scalacOptions ++= Seq(
     "-target:jvm-14",
     //"-deprecation",                    // Emit warning and location for usages of deprecated APIs.
+    //"-Xfatal-warnings"
     "-unchecked",                        // Enable additional warnings where generated code depends on assumptions.
     "-encoding", "UTF-8",                // Specify character encoding used by source files.
     "-Ywarn-dead-code",                  // Warn when dead code is identified.
@@ -18,7 +19,7 @@ lazy val scalacSettings = Seq(
     "-Ywarn-unused:patvars",             // Warn if a variable bound in a pattern is unused.
     "-Ywarn-unused:privates",            // Warn if a private member is unused.
     "-Ywarn-value-discard",              // Warn when non-Unit expression results are unused.
-    "-Ymacro-annotations"
+    "-Ymacro-annotations",
   )
 )
 
@@ -29,7 +30,7 @@ lazy val commonSettings = scalacSettings ++ Seq(
   startYear := Some(2021),
   //sbt headerCreate
   licenses += ("Apache-2.0", new URL("https://www.apache.org/licenses/LICENSE-2.0.txt")),
-  scalaVersion := "2.13.5",
+  scalaVersion := "2.13.6",
   headerMappings := headerMappings.value + (HeaderFileType.scala -> HeaderCommentStyle.cppStyleLineComment),
   headerLicense  := Some(HeaderLicense.Custom(
     """|Copyright (c) 2021 by Vadim Bondarev
@@ -46,9 +47,9 @@ libraryDependencies ++= Seq(
   "ch.qos.logback" % "logback-classic" % "1.2.3",
   "com.yandex.yoctodb" % "yoctodb-core" % "0.0.19",
 
-  "com.thesamet.scalapb" %% "scalapb-runtime" % scalapb.compiler.Version.scalapbVersion % "protobuf",
+  "com.thesamet.scalapb" %% "scalapb-runtime" % scalapb.compiler.Version.scalapbVersion % "protobuf"
 
-  ("com.lihaoyi" % "ammonite" % "2.3.8-65-0f0d597f"  % "test").cross(CrossVersion.full)
+  //("com.lihaoyi" % "ammonite" % "2.3.8-65-0f0d597f"  % "test").cross(CrossVersion.full)
 )
 
 resolvers ++= Seq(Resolver.jcenterRepo, "Sonatype Public" at "https://oss.sonatype.org/content/groups/public/")
@@ -57,11 +58,13 @@ promptTheme := ScalapenosTheme
 
 scalafmtOnCompile := true
 
+/*
 sourceGenerators in Test += Def.task {
   val file = (sourceManaged in Test).value / "amm.scala"
   IO.write(file, """object amm extends App { ammonite.Main().run() }""")
   Seq(file)
 }.taskValue
+*/
 
 
 PB.targets in Compile := Seq(
@@ -69,14 +72,11 @@ PB.targets in Compile := Seq(
 )
 
 
-// Scalafix
-
-
 ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.5.0"
 
-Global / semanticdbEnabled := true
-Global / semanticdbVersion := scalafixSemanticdb.revision
-Global / watchAntiEntropy := scala.concurrent.duration.FiniteDuration(10, java.util.concurrent.TimeUnit.SECONDS)
+// Scalafix
+//Global / semanticdbEnabled := true
+//Global / semanticdbVersion := scalafixSemanticdb.revision
+//Global / watchAntiEntropy := scala.concurrent.duration.FiniteDuration(10, java.util.concurrent.TimeUnit.SECONDS)
 
-
-addCommandAlias("sfix", "scalafix OrganizeImports; test:scalafix OrganizeImports")
+//addCommandAlias("sfix", "scalafix OrganizeImports; test:scalafix OrganizeImports")
