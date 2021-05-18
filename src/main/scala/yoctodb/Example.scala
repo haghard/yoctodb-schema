@@ -62,38 +62,43 @@ object Example extends App with StrictLogging {
         val filterableSchema: Column[ColumnOps[_]] = rawFilterableSchema(filterableProtoc)
         val sortableSchema: Column[ColumnOps[_]]   = rawSortableSchema(sortableProtoc)
 
-        logger.info("Filterable: {} eq {}", filterableSchema, filterableSchema.equals(Filterable))
-        logger.info("Sortable: {} eq {}", sortableSchema, sortableSchema.equals(Sortable))
+        logger.info("Filterable: {}", filterableSchema)
+        logger.info("Sortable: {}", sortableSchema)
 
-        val yoctoQuery = sortableSchema.orderBy { rawSchema ⇒
-          val gameTime = rawSchema.rawColumn[GameTime].term
-          filterableSchema
-            .where { schema ⇒
-              val stage    = schema.rawColumn[FullStage].term
-              val homeTeam = schema.rawColumn[HomeTeam].term
-              val awayTeam = schema.rawColumn[AwayTeam].term
+        if (filterableSchema.equals(Filterable) && sortableSchema.equals(Sortable)) {
 
-              yocto.select.where(
-                yocto.and(
-                  stage.in$(Set("season-20-21")),
-                  yocto.or(
-                    yocto.and(awayTeam.eq$("lal"), homeTeam.eq$("gsw")),
-                    yocto.and(awayTeam.eq$("gsw"), homeTeam.eq$("lal"))
+          val yoctoQuery = sortableSchema.orderBy { rawSchema ⇒
+            val gameTime = rawSchema.rawColumn[GameTime].term
+            filterableSchema
+              .where { schema ⇒
+                val stage    = schema.rawColumn[FullStage].term
+                val homeTeam = schema.rawColumn[HomeTeam].term
+                val awayTeam = schema.rawColumn[AwayTeam].term
+
+                yocto.select.where(
+                  yocto.and(
+                    stage.in$(Set("season-20-21")),
+                    yocto.or(
+                      yocto.and(awayTeam.eq$("lal"), homeTeam.eq$("gsw")),
+                      yocto.and(awayTeam.eq$("gsw"), homeTeam.eq$("lal"))
+                    )
                   )
                 )
-              )
-            /*yocto.select.where(
+              /*yocto.select.where(
                 yocto.and(
                   stage.eq$("season-20-21"),
                   yocto.or(homeTeam.eq$("lal"), awayTeam.eq$("lal"))
                 )
               )*/
-            }
-            .orderBy(gameTime.descOrd)
-            .limit(10)
-        }
-
-        exec(yoctoDb, yoctoQuery)
+              }
+              .orderBy(gameTime.descOrd)
+              .limit(10)
+          }
+          exec(yoctoDb, yoctoQuery)
+        } else
+          throw new Exception(
+            s"Schema mismatch: [Filterable: $filterableSchema : $Filterable] - [Sortable: $sortableSchema : $Sortable ]"
+          )
     }
 
   def runValidated(): Unit = {
@@ -103,12 +108,18 @@ object Example extends App with StrictLogging {
       validate(sortableProtoc, Sortable.columns, "Sortable")
     ).collect { case Some(err) ⇒ err }
 
-    if (errors.isEmpty) {
+    if (errors.isEmpty)
       loadIndex() match {
         case Left(err) ⇒ throw new Exception(err)
         case Right(yoctoDb) ⇒
+          logger.info("Filterable: {}", Filterable)
+          logger.info("Sortable: {}", Sortable)
+
           val yoctoQuery = Sortable.orderBy { s ⇒
-            val gameTime = s.column[GameTime].term
+            //val gameTime = s.column[GameTime].term
+            val yyyy  = s.column[Year].term
+            val month = s.column[Month].term
+            val day   = s.column[Day].term
 
             Filterable
               .where { s ⇒
@@ -116,10 +127,12 @@ object Example extends App with StrictLogging {
                 val homeTeam = s.column[HomeTeam].term
                 val awayTeam = s.column[AwayTeam].term
                 val winner   = s.column[GameWinner].term
+                val mm       = s.column[Month].term
 
                 yocto.select.where(
                   yocto.and(
-                    stage.in$(Set("season-20-21")),
+                    stage.in$(Set("season-18-19", "season-19-20", "season-20-21")),
+                    yocto.and(mm.gte$(1), mm.lte$(4)), //between 1 ... 4
                     yocto.or(
                       yocto.and(awayTeam.eq$("lal"), homeTeam.eq$("gsw")),
                       yocto.and(awayTeam.eq$("gsw"), homeTeam.eq$("lal"))
@@ -128,13 +141,16 @@ object Example extends App with StrictLogging {
                   )
                 )
               }
-              .orderBy(gameTime.descOrd) //.limit(10)
+              .orderBy(yyyy.descOrd)
+              .and(month.descOrd)
+              .and(day.descOrd) //.limit(10) gameTime
           }
           exec(yoctoDb, yoctoQuery)
       }
-    } else throw new Exception(s"Schema mismatch: ${errors.mkString(",")}")
+    else throw new Exception(s"Schema mismatch: ${errors.mkString(",")}")
   }
 
   runValidated()
+
   runRaw()
 }

@@ -34,6 +34,11 @@ object Column {
     * Column[A] with Column[B] <: Column[_]
     * Column[A] with Column[B] <: Column[A]
     * Column[A] with Column[B] <: Column[B]
+    *
+    * Column[ColumnOps[A]] <: Column[ColumnOps[_]]
+    * Column[Time] with Column[Day] <: Column[ColumnOps[_]]
+    * Column[Time] with Column[Day] <: Column[Time]
+    * Column[Time] with Column[Day] <: Column[Day]
     */
   implicit class SchemaColumnSyntax[IndexSchema <: Column[_]](val schema: IndexSchema) extends AnyVal {
 
@@ -63,14 +68,19 @@ trait ColumnOps[A] {
 
   def index: GamesSchema.Index
 
-  def fieldName: String = index match {
+  def fieldName: String = parse(index)
+
+  def term: TermOps[A]
+
+  private def parse(ind: GamesSchema.Index) = ind match {
     case Index.Stage(v)    ⇒ v.companion.scalaDescriptor.name
     case Index.AwayTeam(v) ⇒ v.companion.scalaDescriptor.name
     case Index.HomeTeam(v) ⇒ v.companion.scalaDescriptor.name
     case Index.Time(v)     ⇒ v.companion.scalaDescriptor.name
     case Index.Winner(v)   ⇒ v.companion.scalaDescriptor.name
+    case Index.Year(v)     ⇒ v.companion.scalaDescriptor.name
+    case Index.Month(v)    ⇒ v.companion.scalaDescriptor.name
+    case Index.Day(v)      ⇒ v.companion.scalaDescriptor.name
     case Index.Empty       ⇒ EmptyColumn
   }
-
-  def term: TermOps[A]
 }

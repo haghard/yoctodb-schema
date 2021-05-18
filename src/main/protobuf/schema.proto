@@ -1,8 +1,6 @@
 syntax = "proto3";
 
 import "scalapb/scalapb.proto";
-import "google/protobuf/timestamp.proto";
-import "google/protobuf/any.proto";
 
 package yoctodb.schema.games.v1;
 
@@ -40,6 +38,21 @@ message GamesSchema {
       IndexType indexType=2;
     }
 
+    message games_yy {
+      FieldType type=1;
+      IndexType indexType=2;
+    }
+
+    message games_mm {
+      FieldType type=1;
+      IndexType indexType=2;
+    }
+
+    message games_dd {
+      FieldType type=1;
+      IndexType indexType=2;
+    }
+
     //all fields in the index
     oneof index {
       games_stage stage = 1;
@@ -47,13 +60,16 @@ message GamesSchema {
       games_ht homeTeam = 3;
       games_ts time = 4;
       games_winner winner = 5;
+      games_yy year = 6;
+      games_mm month = 7;
+      games_dd day = 8;
     }
 
     enum IndexType {
       Filterable  = 0;
       Sortable  = 1;
-      //Full=3;
-      //Stored=4;
+      Both = 2;
+      //Stored=3;
     }
 
     enum FieldType {

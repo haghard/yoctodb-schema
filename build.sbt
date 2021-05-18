@@ -40,19 +40,18 @@ lazy val commonSettings = scalacSettings ++ Seq(
 )
 
 libraryDependencies ++= Seq(
-  "dev.zio" %%% "izumi-reflect" % "1.1.1",
+  "dev.zio" %% "izumi-reflect" % "1.1.1",
   "com.typesafe" % "config" % "1.4.1",
   "com.typesafe.scala-logging" %% "scala-logging" % "3.9.3",
   "ch.qos.logback" % "logback-classic" % "1.2.3",
   "com.yandex.yoctodb" % "yoctodb-core" % "0.0.19",
+
   "com.thesamet.scalapb" %% "scalapb-runtime" % scalapb.compiler.Version.scalapbVersion % "protobuf",
+
   ("com.lihaoyi" % "ammonite" % "2.3.8-65-0f0d597f"  % "test").cross(CrossVersion.full)
 )
 
-resolvers ++= Seq(
-  Resolver.jcenterRepo,
-  "Sonatype Public" at "https://oss.sonatype.org/content/groups/public/"
-)
+resolvers ++= Seq(Resolver.jcenterRepo, "Sonatype Public" at "https://oss.sonatype.org/content/groups/public/")
 
 promptTheme := ScalapenosTheme
 
@@ -63,6 +62,7 @@ sourceGenerators in Test += Def.task {
   IO.write(file, """object amm extends App { ammonite.Main().run() }""")
   Seq(file)
 }.taskValue
+
 
 PB.targets in Compile := Seq(
   scalapb.gen() -> (sourceManaged in Compile).value

@@ -42,7 +42,7 @@ package object yoctodb {
 
   }
 
-  trait NumericOps[T] extends FilterableOps[T] with SortableOps[T] {
+  trait NumericOps[T] extends FilterableOps[T] with SetOps[T] {
 
     def gt$(v: T): com.yandex.yoctodb.query.TermCondition
 
@@ -51,6 +51,6 @@ package object yoctodb {
     def lt$(v: T): com.yandex.yoctodb.query.TermCondition
 
     def lte$(v: T): com.yandex.yoctodb.query.TermCondition
-  }
 
+  }
 }
