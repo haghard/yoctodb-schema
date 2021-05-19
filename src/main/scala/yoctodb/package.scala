@@ -23,9 +23,9 @@ package object yoctodb {
     def in$(vs: scala.collection.immutable.Set[T]): com.yandex.yoctodb.query.TermCondition
   }
 
-  trait Inequality[T] extends FilterableOps[T] with SetOps[T]
+  trait InEquality[T] extends FilterableOps[T] with SetOps[T]
 
-  trait SortableOps[T] extends TermOps[T] {
+  trait OrderingOps[T] extends TermOps[T] {
 
     def descOrd: com.yandex.yoctodb.query.Order
 

@@ -18,9 +18,6 @@ import java.time.format.DateTimeFormatter
 import GamesIndex._
 import com.yandex.yoctodb.v1.immutable.V1Database
 
-import scala.collection.immutable
-import scala.jdk.CollectionConverters.SetHasAsScala
-
 //runMain yoctodb.Example
 object Example extends App with StrictLogging {
   val indexPath = "indexes/games"
@@ -62,33 +59,22 @@ object Example extends App with StrictLogging {
     loadIndex() match {
       case Left(err) ⇒ throw new Exception(err)
       case Right(yoctoDb) ⇒
-        val filterableFromIndex = immutable.SortedSet.from(yoctoDb.getFilters.keySet().asScala)
-        val sortableFromIndex   = immutable.SortedSet.from(yoctoDb.getSorters.keySet().asScala)
-
-        val f = immutable.SortedSet.from(Filterable.columns)
-        val s = immutable.SortedSet.from(Sortable.columns)
-
-        logger.info(
-          "Index segments : [ Filterable: {}. Sortable:{} ]",
-          filterableFromIndex.mkString(","),
-          sortableFromIndex.mkString(",")
-        )
-        logger.info(
-          "Schema segments: [ Filterable: {}. Sortable:{} ]",
-          f.mkString(","),
-          s.mkString(",")
+        logger.warn(
+          "Segments: [Filterable: {}]. [Sortable: {}]",
+          Filterable.columns.mkString(","),
+          Sortable.columns.mkString(",")
         )
 
-        logger.info(printSchema(filterableFromIndex ++ sortableFromIndex))
+        logger.info(printSchema(Filterable.columns ++ Sortable.columns))
 
-        if (checkIndexAgainstSchema(filterableFromIndex, f) && checkIndexAgainstSchema(sortableFromIndex, s)) {
-          val yoctoQuery = Sortable.orderBy { s ⇒
+        if (checkFilteredSegment(yoctoDb, Filterable.columns) && checkSortedSegment(yoctoDb, Sortable.columns)) {
+          val yoctoQuery = GamesIndex.Sortable.orderBy { s ⇒
             //val gameTime = s.column[GameTime].term
             val yyyy  = s.column[Year].term
             val month = s.column[Month].term
             val day   = s.column[Day].term
 
-            Filterable
+            GamesIndex.Filterable
               .where { s ⇒
                 val stage    = s.column[FullStage].term
                 val homeTeam = s.column[HomeTeam].term
@@ -108,6 +94,7 @@ object Example extends App with StrictLogging {
                   )
                 )
               }
+              //.orderBy(gameTime.descOrd)
               .orderBy(yyyy.descOrd)
               .and(month.descOrd)
               .and(day.descOrd) //.limit(10) gameTime

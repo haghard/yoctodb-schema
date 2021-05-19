@@ -4,7 +4,7 @@
 
 ## Motivation
 
-TODO
+[Yoctodb](https://github.com/yandex/yoctodb) has no schema and untyped query language. This is an attempt to provide typed schema for indexes so that we could use it to construct typed queries.
 
 
 ## License

@@ -14,6 +14,7 @@ import com.yandex.yoctodb.query.QueryBuilder.lt
 import com.yandex.yoctodb.query.QueryBuilder.lte
 import com.yandex.yoctodb.query.QueryBuilder.{eq ⇒ equal}
 import com.yandex.yoctodb.util.UnsignedByteArrays.from
+import com.yandex.yoctodb.v1.immutable.V1Database
 import yoctodb.schema.games.v1.GamesSchema
 import yoctodb.schema.games.v1.GamesSchema._
 
@@ -43,28 +44,28 @@ object GamesIndex {
 
   //**************************************************************************************************************/
   final case class FullStage(index: GamesSchema.Index = stage) extends ColumnOps[String] {
-    val term = new Inequality[String] {
+    val term = new InEquality[String] {
       override def eq$(stageName: String)   = equal(name, from(stageName))
       override def in$(stages: Set[String]) = in(name, stages.map(from(_)).toSeq: _*)
     }
   }
 
   final case class AwayTeam(index: GamesSchema.Index = awayTeam) extends ColumnOps[String] {
-    val term = new Inequality[String] {
+    val term = new InEquality[String] {
       override def eq$(team: String)       = equal(name, from(team))
       override def in$(teams: Set[String]) = in(name, teams.map(from(_)).toSeq: _*)
     }
   }
 
   final case class HomeTeam(index: GamesSchema.Index = homeTeam) extends ColumnOps[String] {
-    val term = new Inequality[String] {
+    val term = new InEquality[String] {
       def eq$(team: String)       = equal(name, from(team))
       def in$(teams: Set[String]) = in(name, teams.map(from(_)).toSeq: _*)
     }
   }
 
   final case class Year(index: GamesSchema.Index = year) extends ColumnOps[Int] {
-    val term = new NumericOps[Int] with SortableOps[Int] {
+    val term = new NumericOps[Int] with OrderingOps[Int] {
       def gt$(yy: Int)         = gt(name, from(yy))
       def gte$(yy: Int)        = gte(name, from(yy))
       def lt$(yy: Int)         = lt(name, from(yy))
@@ -77,7 +78,7 @@ object GamesIndex {
   }
 
   final case class Month(index: GamesSchema.Index = month) extends ColumnOps[Int] {
-    val term = new NumericOps[Int] with SortableOps[Int] {
+    val term = new NumericOps[Int] with OrderingOps[Int] {
       def gt$(month: Int)       = gt(name, from(month))
       def gte$(month: Int)      = gte(name, from(month))
       def lt$(month: Int)       = lt(name, from(month))
@@ -90,7 +91,7 @@ object GamesIndex {
   }
 
   final case class Day(index: GamesSchema.Index = day) extends ColumnOps[Int] {
-    val term = new NumericOps[Int] with SortableOps[Int] {
+    val term = new NumericOps[Int] with OrderingOps[Int] {
       def gt$(day: Int)       = gt(name, from(day))
       def gte$(day: Int)      = gte(name, from(day))
       def lt$(day: Int)       = lt(name, from(day))
@@ -103,14 +104,14 @@ object GamesIndex {
   }
 
   final case class GameWinner(index: GamesSchema.Index = winner) extends ColumnOps[String] {
-    val term = new Inequality[String] {
+    val term = new InEquality[String] {
       def eq$(team: String)       = equal(name, from(team))
       def in$(teams: Set[String]) = in(name, teams.map(from(_)).toSeq: _*)
     }
   }
 
   final case class GameTime(index: GamesSchema.Index = time) extends ColumnOps[Long] {
-    val term = new SortableOps[Long] {
+    val term = new OrderingOps[Long] {
       val descOrd = desc(name)
       val ascOrd  = asc(name)
     }
@@ -120,13 +121,19 @@ object GamesIndex {
     val term = EmptyTermOps
   }
 
+  def checkFilteredSegment(db: V1Database, columns: Set[String]): Boolean =
+    columns.forall(column ⇒ db.getFilter(column).ne(null))
+
+  def checkSortedSegment(db: V1Database, columns: Set[String]): Boolean =
+    columns.forall(column ⇒ db.getSorter(column).ne(null))
+
   /** In order to declare this index as "safe to use" all fields from `columnsFromSchema` should be
     * presented in `columnsFromIndex`
     */
   def checkIndexAgainstSchema(
     columnsFromIndex: Set[String],
     columnFromSchema: Set[String]
-  ): Boolean = columnFromSchema.foldLeft(true)((flag, e) ⇒ flag & columnsFromIndex.contains(e))
+  ): Boolean = columnFromSchema.forall(columnsFromIndex.contains(_))
 
   def printSchema(
     columnsFromIndex: Set[String]
@@ -149,6 +156,7 @@ object GamesIndex {
         case FieldType.Unrecognized(_) ⇒ "Unrecognized"
       }
 
+    "\n" +
     columnsFromIndex
       .map { name ⇒
         IndexColumns
@@ -162,6 +170,7 @@ object GamesIndex {
               case Index.Year(v)     ⇒ v.companion.scalaDescriptor.name == name
               case Index.Month(v)    ⇒ v.companion.scalaDescriptor.name == name
               case Index.Day(v)      ⇒ v.companion.scalaDescriptor.name == name
+              case Index.Empty       ⇒ false
             }
           }
           .map {
@@ -181,6 +190,7 @@ object GamesIndex {
               "[" + v.companion.scalaDescriptor.name + ":" + fieldType(v.`type`) + ":" + indType(v.indexType) + "]"
             case Index.Day(v) ⇒
               "[" + v.companion.scalaDescriptor.name + ":" + fieldType(v.`type`) + ":" + indType(v.indexType) + "]"
+            case Index.Empty ⇒ ""
           }
       }
       .flatten
