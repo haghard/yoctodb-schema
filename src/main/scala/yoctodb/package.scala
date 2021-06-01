@@ -1,3 +1,4 @@
+import io.estatico.newtype.macros.newtype
 // Copyright (c) 2021 by Vadim Bondarev
 // This software is licensed under the Apache License, Version 2.0.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0.
@@ -44,4 +45,8 @@ package object yoctodb {
     def lte$(v: T): com.yandex.yoctodb.query.TermCondition
 
   }
+
+  @newtype case class TeamV(v: String)
+  @newtype case class StageV(v: String)
+
 }

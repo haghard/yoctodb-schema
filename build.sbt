@@ -49,8 +49,30 @@ libraryDependencies ++= Seq(
   "ch.qos.logback" % "logback-classic" % "1.2.3",
   "com.yandex.yoctodb" % "yoctodb-core" % "0.0.19",
 
+  //https://github.com/estatico/scala-newtype zero-overhead , copy method free
+  "io.estatico" %% "newtype" % "0.4.4",
+
+  //https://kwark.github.io/refined-in-practice/#1
+  //https://blog.rockthejvm.com/refined-types/
+  //Gabriel Volpe – Why types matter: https://www.youtube.com/watch?v=n1Y2V4zCZdQ&list=PLBqWQH1MiwBSThMSFV4k4dGTZkS0mfbxo&index=19
+  //validation library
+  "eu.timepit" %% "refined"                 % "0.9.24",
+  //"eu.timepit" %% "refined-cats"            % "0.9.24",
+
+  //"dev.zio" %% "zio-prelude"  % "1.0.0-RC4",
+
   "com.thesamet.scalapb" %% "scalapb-runtime" % scalapb.compiler.Version.scalapbVersion % "protobuf"
 
+  /*
+  //https://kwark.github.io/refined-in-practice/#1
+  //https://blog.rockthejvm.com/refined-types/
+  //Gabriel Volpe – Why types matter: https://www.youtube.com/watch?v=n1Y2V4zCZdQ&list=PLBqWQH1MiwBSThMSFV4k4dGTZkS0mfbxo&index=19
+  "eu.timepit" %% "refined"                 % "0.9.24",
+  "eu.timepit" %% "refined-cats"            % "0.9.24",
+
+  //https://github.com/estatico/scala-newtype
+  "io.estatico" %% "newtype"                % "0.4.4",
+   */
   //("com.lihaoyi" % "ammonite" % "2.3.8-65-0f0d597f"  % "test").cross(CrossVersion.full)
 )
 

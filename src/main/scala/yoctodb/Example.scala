@@ -55,18 +55,15 @@ object Example extends App with StrictLogging {
       }
     )
 
-  def run(): Unit =
-    loadIndex() match {
-      case Left(err) ⇒ throw new Exception(err)
-      case Right(yoctoDb) ⇒
-        logger.warn(
-          "Segments: [Filterable: {}]. [Sortable: {}]",
-          Filterable.columns.mkString(","),
-          Sortable.columns.mkString(",")
-        )
-
-        logger.info(printSchema(Filterable.columns ++ Sortable.columns))
-
+  def run(): Either[String, Unit] =
+    for {
+      yoctoDb  ← loadIndex()
+      ses18_19 ← stage("season-18-19")
+      ses19_20 ← stage("season-19-20")
+      lal      ← team("lal")
+      gsw      ← team("gsw")
+      _ = logger.info("Schema {}", showSchema(Filterable.columns ++ Sortable.columns))
+      r ←
         if (checkFilteredSegment(yoctoDb, Filterable.columns) && checkSortedSegment(yoctoDb, Sortable.columns)) {
           val yoctoQuery = GamesIndex.Sortable.orderBy { s ⇒
             //val gameTime = s.column[GameTime].term
@@ -84,13 +81,13 @@ object Example extends App with StrictLogging {
 
                 yocto.select.where(
                   yocto.and(
-                    stage.in$(Set("season-18-19", "season-19-20", "season-20-21")),
+                    stage.in$(Set(ses18_19.v, ses19_20.v)),
                     yocto.and(mm.gte$(1), mm.lte$(4)), //between 1 ... 4
                     yocto.or(
-                      yocto.and(awayTeam.eq$("lal"), homeTeam.eq$("gsw")),
-                      yocto.and(awayTeam.eq$("gsw"), homeTeam.eq$("lal"))
+                      yocto.and(awayTeam.eq$(lal.v), homeTeam.eq$(gsw.v)),
+                      yocto.and(awayTeam.eq$(gsw.v), homeTeam.eq$(lal.v))
                     ),
-                    winner.eq$("lal")
+                    winner.eq$(lal.v)
                   )
                 )
               }
@@ -99,9 +96,12 @@ object Example extends App with StrictLogging {
               .and(month.descOrd)
               .and(day.descOrd) //.limit(10) gameTime
           }
-          exec(yoctoDb, yoctoQuery)
-        } else throw new Exception(s"Schema mismatch !")
-    }
+          Right(exec(yoctoDb, yoctoQuery))
+        } else Left("Schema mismatch !")
+    } yield r
 
-  run()
+  run() match {
+    case Left(error) ⇒ throw new Exception(error)
+    case Right(_)    ⇒ logger.warn("Done")
+  }
 }
