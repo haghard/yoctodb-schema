@@ -1,4 +1,3 @@
-import io.estatico.newtype.macros.newtype
 // Copyright (c) 2021 by Vadim Bondarev
 // This software is licensed under the Apache License, Version 2.0.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0.
@@ -46,7 +45,17 @@ package object yoctodb {
 
   }
 
-  @newtype case class TeamV(v: String)
-  @newtype case class StageV(v: String)
+  import zio.prelude._
+  import zio.test.Assertion._
+
+  object Team extends SubtypeSmart[String](matchesRegex("lal|lac|por|chi|sea|hou|mia|okc|den|mil|ind|atl|min|tor|gsw"))
+  type Team = Team.Type
+
+  object Stage extends SubtypeSmart[String](matchesRegex("(season|playoff)-[0-9]{2}-[0-9]{2}"))
+  type Stage = Stage.Type
+
+  //implicitly[String <:< CharSequence]
+
+  //zio-prelude
 
 }

@@ -33,22 +33,9 @@ object GamesIndex {
   private val time                                 = Index.Time(games_ts(GamesSchema.FieldType.Lng, GamesSchema.IndexType.Sortable))
   private val IndexColumns: Set[GamesSchema.Index] = Set(stage, homeTeam, awayTeam, winner, year, month, day, time)
 
-  import eu.timepit.refined.string.MatchesRegex
-  import eu.timepit.refined._
-  import eu.timepit.refined.auto._
+  def stage(v: String) = Stage.make(v)
 
-  //
-  type Stage    = MatchesRegex[W.`"""(season|playoff)-[0-9]{2}-[0-9]{2}"""`.T]
-  type TeamName = MatchesRegex[W.`"lal|lac|por|chi|sea|hou|mia|okc|den|mil|ind|atl|minu|tor|gsw"`.T]
-
-  def stage(v: String) = refineV[Stage](v).map(StageV(_))
-
-  def team(v: String) = refineV[TeamName](v).map(TeamV(_))
-
-  /*def fromRawInput(stage: String, team: String): Either[String, (StageV, TeamV)] =
-    refineV[Stage](stage).map(StageV(_)).flatMap { stageV =>
-      refineV[TeamName](team).map(TeamV(_)).map((stageV,_))
-    }*/
+  def team(v: String) = Team.make(v)
 
   //Precisely defined filterable schema as a value
   val Filterable =

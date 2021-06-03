@@ -43,37 +43,16 @@ lazy val commonSettings = scalacSettings ++ Seq(
 unmanagedBase := baseDirectory.value / "lib"
 
 libraryDependencies ++= Seq(
-  "dev.zio" %% "izumi-reflect" % "1.1.1",
+  //"dev.zio" %% "izumi-reflect" % "1.1.2",
   "com.typesafe" % "config" % "1.4.1",
   "com.typesafe.scala-logging" %% "scala-logging" % "3.9.3",
   "ch.qos.logback" % "logback-classic" % "1.2.3",
   "com.yandex.yoctodb" % "yoctodb-core" % "0.0.19",
 
-  //https://github.com/estatico/scala-newtype zero-overhead , copy method free
-  "io.estatico" %% "newtype" % "0.4.4",
+  "dev.zio" %% "zio-prelude"  % "1.0.0-RC5",
 
-  //https://kwark.github.io/refined-in-practice/#1
-  //https://blog.rockthejvm.com/refined-types/
-  //Gabriel Volpe – Why types matter: https://www.youtube.com/watch?v=n1Y2V4zCZdQ&list=PLBqWQH1MiwBSThMSFV4k4dGTZkS0mfbxo&index=19
-  //validation library
-  "eu.timepit" %% "refined"                 % "0.9.24",
-  //"eu.timepit" %% "refined-cats"            % "0.9.24",
-
-  //"dev.zio" %% "zio-prelude"  % "1.0.0-RC4",
-
-  "com.thesamet.scalapb" %% "scalapb-runtime" % scalapb.compiler.Version.scalapbVersion % "protobuf"
-
-  /*
-  //https://kwark.github.io/refined-in-practice/#1
-  //https://blog.rockthejvm.com/refined-types/
-  //Gabriel Volpe – Why types matter: https://www.youtube.com/watch?v=n1Y2V4zCZdQ&list=PLBqWQH1MiwBSThMSFV4k4dGTZkS0mfbxo&index=19
-  "eu.timepit" %% "refined"                 % "0.9.24",
-  "eu.timepit" %% "refined-cats"            % "0.9.24",
-
-  //https://github.com/estatico/scala-newtype
-  "io.estatico" %% "newtype"                % "0.4.4",
-   */
-  //("com.lihaoyi" % "ammonite" % "2.3.8-65-0f0d597f"  % "test").cross(CrossVersion.full)
+  "com.thesamet.scalapb" %% "scalapb-runtime" % scalapb.compiler.Version.scalapbVersion % "protobuf",
+  ("com.lihaoyi" % "ammonite" % "2.3.8-124-2da846d2"  % "test").cross(CrossVersion.full)
 )
 
 resolvers ++= Seq(Resolver.jcenterRepo, "Sonatype Public" at "https://oss.sonatype.org/content/groups/public/")
@@ -82,25 +61,22 @@ promptTheme := ScalapenosTheme
 
 scalafmtOnCompile := true
 
-/*
-sourceGenerators in Test += Def.task {
-  val file = (sourceManaged in Test).value / "amm.scala"
+Test / sourceGenerators += Def.task {
+  val file = (Test / sourceManaged).value / "amm.scala"
   IO.write(file, """object amm extends App { ammonite.Main().run() }""")
   Seq(file)
 }.taskValue
-*/
 
 
-PB.targets in Compile := Seq(
-  scalapb.gen() -> (sourceManaged in Compile).value
+Compile / PB.targets := Seq(
+  scalapb.gen() -> (Compile / sourceManaged).value
 )
-
 
 ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.5.0"
 
 // Scalafix
-//Global / semanticdbEnabled := true
-//Global / semanticdbVersion := scalafixSemanticdb.revision
-//Global / watchAntiEntropy := scala.concurrent.duration.FiniteDuration(10, java.util.concurrent.TimeUnit.SECONDS)
+Global / semanticdbEnabled := true
+Global / semanticdbVersion := scalafixSemanticdb.revision
+Global / watchAntiEntropy := scala.concurrent.duration.FiniteDuration(10, java.util.concurrent.TimeUnit.SECONDS)
 
-//addCommandAlias("sfix", "scalafix OrganizeImports; test:scalafix OrganizeImports")
+addCommandAlias("sfix", "scalafix OrganizeImports; test:scalafix OrganizeImports")
