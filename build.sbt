@@ -6,7 +6,7 @@ lazy val scalacSettings = Seq(
   scalacOptions ++= Seq(
     "-target:jvm-14",
     //"-deprecation",                    // Emit warning and location for usages of deprecated APIs.
-    //"-Xfatal-warnings"
+    //"-Xfatal-warnings",
     "-unchecked",                        // Enable additional warnings where generated code depends on assumptions.
     "-encoding", "UTF-8",                // Specify character encoding used by source files.
     "-Ywarn-dead-code",                  // Warn when dead code is identified.
@@ -75,6 +75,7 @@ Compile / PB.targets := Seq(
 ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.5.0"
 
 // Scalafix
+
 Global / semanticdbEnabled := true
 Global / semanticdbVersion := scalafixSemanticdb.revision
 Global / watchAntiEntropy := scala.concurrent.duration.FiniteDuration(10, java.util.concurrent.TimeUnit.SECONDS)

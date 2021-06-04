@@ -55,7 +55,4 @@ package object yoctodb {
   type Stage = Stage.Type
 
   //implicitly[String <:< CharSequence]
-
-  //zio-prelude
-
 }

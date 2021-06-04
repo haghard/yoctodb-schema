@@ -53,6 +53,11 @@ message GamesSchema {
       IndexType indexType=2;
     }
 
+    //message games_fake {
+    //  FieldType type=1;
+    //  IndexType indexType=2;
+    //}
+
     //all fields in the index
     oneof index {
       games_stage stage = 1;
@@ -63,6 +68,7 @@ message GamesSchema {
       games_yy year = 6;
       games_mm month = 7;
       games_dd day = 8;
+      //games_fake fake = 9;
     }
 
     enum IndexType {

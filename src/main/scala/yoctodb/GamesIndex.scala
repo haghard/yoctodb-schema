@@ -17,31 +17,35 @@ import com.yandex.yoctodb.util.UnsignedByteArrays.from
 import com.yandex.yoctodb.v1.immutable.V1Database
 import yoctodb.schema.games.v1.GamesSchema
 import yoctodb.schema.games.v1.GamesSchema._
+import zio.prelude.Validation
 
 object GamesIndex {
   val IndexName         = "games"
   val PayloadColumnName = "g_payload"
   val InfoColumnName    = "g_info"
 
-  private val stage                                = Index.Stage(games_stage(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable))
-  private val awayTeam                             = Index.AwayTeam(games_at(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable))
-  private val homeTeam                             = Index.HomeTeam(games_ht(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable))
-  private val winner                               = Index.Winner(games_winner(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable))
-  private val year                                 = Index.Year(games_yy(GamesSchema.FieldType.Integer, GamesSchema.IndexType.Both))
-  private val month                                = Index.Month(games_mm(GamesSchema.FieldType.Integer, GamesSchema.IndexType.Both))
-  private val day                                  = Index.Day(games_dd(GamesSchema.FieldType.Integer, GamesSchema.IndexType.Both))
-  private val time                                 = Index.Time(games_ts(GamesSchema.FieldType.Lng, GamesSchema.IndexType.Sortable))
-  private val IndexColumns: Set[GamesSchema.Index] = Set(stage, homeTeam, awayTeam, winner, year, month, day, time)
+  private val stage    = Index.Stage(games_stage(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable))
+  private val awayTeam = Index.AwayTeam(games_at(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable))
+  private val homeTeam = Index.HomeTeam(games_ht(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable))
+  private val winner   = Index.Winner(games_winner(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable))
+  private val year     = Index.Year(games_yy(GamesSchema.FieldType.Integer, GamesSchema.IndexType.Both))
+  private val month    = Index.Month(games_mm(GamesSchema.FieldType.Integer, GamesSchema.IndexType.Both))
+  private val day      = Index.Day(games_dd(GamesSchema.FieldType.Integer, GamesSchema.IndexType.Both))
+  private val time     = Index.Time(games_ts(GamesSchema.FieldType.Lng, GamesSchema.IndexType.Sortable))
+  //private val fake     = Index.Fake(games_fake(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable))
 
-  def stage(v: String) = Stage.make(v)
+  private val IndexColumns: Set[GamesSchema.Index] =
+    Set(stage, homeTeam, awayTeam, winner, year, month, day, time /*, fake*/ )
 
-  def team(v: String) = Team.make(v)
+  def stage(v: String): Validation[String, Stage] = Stage.make(v)
+
+  def team(v: String): Validation[String, Team] = Team.make(v)
 
   //Precisely defined filterable schema as a value
   val Filterable =
     Column(FullStage()) ++ Column(AwayTeam()) ++ Column(HomeTeam()) ++ Column(GameWinner()) ++ Column(Year()) ++ Column(
       Month()
-    ) ++ Column(Day())
+    ) ++ Column(Day()) //++ Column(Fake())
 
   //Sortable schema as a value
   val Sortable = Column(GameTime()) ++ Column(Year()) ++ Column(Month()) ++ Column(Day())
@@ -125,6 +129,13 @@ object GamesIndex {
     val term = EmptyTermOps
   }
 
+  /*final case class Fake(index: GamesSchema.Index = fake) extends ColumnOps[String] {
+    val term = new InEquality[String] {
+      def eq$(team: String)       = equal(name, from(team))
+      def in$(teams: Set[String]) = in(name, teams.map(from(_)).toSeq: _*)
+    }
+  }*/
+
   def checkFilteredSegment(db: V1Database, columns: Set[String]): Boolean =
     columns.forall(column ⇒ db.getFilter(column).ne(null))
 
@@ -175,6 +186,7 @@ object GamesIndex {
               case Index.Month(v)    ⇒ v.companion.scalaDescriptor.name == name
               case Index.Day(v)      ⇒ v.companion.scalaDescriptor.name == name
               case Index.Empty       ⇒ false
+              //case Index.Fake(v)     ⇒ v.companion.scalaDescriptor.name == name
             }
           }
           .map {
@@ -195,10 +207,10 @@ object GamesIndex {
             case Index.Day(v) ⇒
               "[" + v.companion.scalaDescriptor.name + ":" + fieldType(v.`type`) + ":" + indType(v.indexType) + "]"
             case Index.Empty ⇒ ""
+            //case Index.Fake(v) ⇒ "[" + v.companion.scalaDescriptor.name + ":" + fieldType(v.`type`) + ":" + indType(v.indexType) + "]"
           }
       }
       .flatten
       .mkString("\n")
   }
-
 }

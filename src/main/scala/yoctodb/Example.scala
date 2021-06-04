@@ -57,52 +57,66 @@ object Example extends App with StrictLogging {
       }
     )
 
-  def run() =
-    Validation
-      .validateWith(loadIndex(), stage("season-18-19"), stage("season-19-20"), team("lal"), team("gsw")) {
-        (yoctoDb, ses18_19, ses19_20, lal, gsw) ⇒
-          logger.info("Schema {}", showSchema(Filterable.columns ++ Sortable.columns))
+  /** Why prefer zio.Validation over Either?
+    * Either short-circuits on failure. If validation errors exist, we just get the first one.
+    * You can go for Either[NonEmptyList[String], Unit] but it requires boilerplate
+    */
+  def isValidSchema(yoctoDb: V1Database): Validation[String, Boolean] =
+    Validation.validateWith(
+      Validation.fromPredicateWith("Filterable schema mismatch")(checkFilteredSegment(yoctoDb, Filterable.columns))(
+        identity
+      ),
+      Validation.fromPredicateWith("Sortable schema mismatch")(checkSortedSegment(yoctoDb, Sortable.columns))(identity)
+    )(_ && _)
 
-          if (checkFilteredSegment(yoctoDb, Filterable.columns) && checkSortedSegment(yoctoDb, Sortable.columns)) {
-            val yoctoQuery = GamesIndex.Sortable.orderBy { s ⇒
-              //val gameTime = s.column[GameTime].term
-              val yyyy  = s.column[Year].term
-              val month = s.column[Month].term
-              val day   = s.column[Day].term
-
-              GamesIndex.Filterable
-                .where { s ⇒
-                  val stage    = s.column[FullStage].term
-                  val homeTeam = s.column[HomeTeam].term
-                  val awayTeam = s.column[AwayTeam].term
-                  val winner   = s.column[GameWinner].term
-                  val mm       = s.column[Month].term
-
-                  yocto.select.where(
-                    yocto.and(
-                      stage.in$(Set(ses18_19, ses19_20)),
-                      yocto.and(mm.gte$(1), mm.lte$(4)), //between 1 ... 4
-                      yocto.or(
-                        yocto.and(awayTeam.eq$(lal), homeTeam.eq$(gsw)),
-                        yocto.and(awayTeam.eq$(gsw), homeTeam.eq$(lal))
-                      ),
-                      winner.eq$(lal)
-                    )
-                  )
-                }
-                //.orderBy(gameTime.descOrd)
-                .orderBy(yyyy.descOrd)
-                .and(month.descOrd)
-                .and(day.descOrd) //.limit(10) gameTime
-            }
-            exec(yoctoDb, yoctoQuery)
-          }
-      }
-
-  run() match {
+  Validation
+    .validateWith(loadIndex(), stage("season-18-19"), stage("season-19-20"), team("lal"), team("gsw")) {
+      (yoctoDb, ses18_19, ses19_20, lal, gsw) ⇒ (yoctoDb, ses18_19, ses19_20, lal, gsw)
+    }
+    .flatMap { case (yoctoDb, ses18_19, ses19_20, lal, gsw) ⇒
+      logger.warn("Index schema layout")
+      logger.info(showSchema(Filterable.columns ++ Sortable.columns))
+      isValidSchema(yoctoDb).map(_ ⇒ (yoctoDb, ses18_19, ses19_20, lal, gsw))
+    } match {
     case ZValidation.Failure(_, errors) ⇒
       logger.error(errors.toChunk.mkString(","))
-    case ZValidation.Success(_, _) ⇒
-      logger.warn("Success")
+    case ZValidation.Success(_, params) ⇒
+      logger.warn("Index schema validated")
+
+      val (yoctoDb, ses18_19, ses19_20, lal, gsw) = params
+
+      val yoctoQuery = GamesIndex.Sortable.orderBy { s ⇒
+        //val gameTime = s.column[GameTime].term
+        val yyyy  = s.column[Year].term
+        val month = s.column[Month].term
+        val day   = s.column[Day].term
+
+        GamesIndex.Filterable
+          .where { s ⇒
+            val stage    = s.column[FullStage].term
+            val homeTeam = s.column[HomeTeam].term
+            val awayTeam = s.column[AwayTeam].term
+            val winner   = s.column[GameWinner].term
+            val mm       = s.column[Month].term
+
+            yocto.select.where(
+              yocto.and(
+                stage.in$(Set(ses18_19, ses19_20)),
+                yocto.and(mm.gte$(1), mm.lte$(4)), //between 1 ... 4
+                yocto.or(
+                  yocto.and(awayTeam.eq$(lal), homeTeam.eq$(gsw)),
+                  yocto.and(awayTeam.eq$(gsw), homeTeam.eq$(lal))
+                ),
+                winner.eq$(lal)
+              )
+            )
+          }
+          //.orderBy(gameTime.descOrd)
+          .orderBy(yyyy.descOrd)
+          .and(month.descOrd)
+          .and(day.descOrd) //.limit(10) gameTime
+      }
+
+      exec(yoctoDb, yoctoQuery)
   }
 }

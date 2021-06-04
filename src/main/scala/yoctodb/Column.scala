@@ -81,6 +81,7 @@ trait ColumnOps[A] {
     case Index.Year(v)     ⇒ v.companion.scalaDescriptor.name
     case Index.Month(v)    ⇒ v.companion.scalaDescriptor.name
     case Index.Day(v)      ⇒ v.companion.scalaDescriptor.name
-    case Index.Empty       ⇒ EmptyColumn
+    //case Index.Fake(v)     ⇒ v.companion.scalaDescriptor.name
+    case Index.Empty ⇒ EmptyColumn
   }
 }
