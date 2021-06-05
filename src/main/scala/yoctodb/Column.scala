@@ -11,7 +11,7 @@ import yoctodb.schema.games.v1.GamesSchema._
 final case class Column[+A <: ColumnOps[_]] private (
   private val underlying: Map[Tag[_], A],
   private val columnNames: Set[String]
-) { self ⇒
+) { self =>
 
   def columns = self.columnNames - EmptyColumn
 
@@ -20,15 +20,15 @@ final case class Column[+A <: ColumnOps[_]] private (
   override def toString: String = s"Schema(${columns.mkString(",")})"
 
   override def equals(obj: Any): Boolean = obj match {
-    case that: Column[_] ⇒ columns.equals(that.columns)
-    case _               ⇒ false
+    case that: Column[_] => columns.equals(that.columns)
+    case _               => false
   }
 }
 
 object Column {
 
   def apply[A <: ColumnOps[_]](value: A)(implicit tag: Tag[A]): Column[A] =
-    new Column(Map(tag → value), Set(value.name))
+    new Column(Map(tag -> value), Set(value.name))
 
   /** Column[A] <: Column[_]
     * Column[A] with Column[B] <: Column[_]
@@ -55,11 +55,11 @@ object Column {
       schema.underlying(tag).asInstanceOf[T]
 
     def where(
-      buildQuery: IndexSchema ⇒ com.yandex.yoctodb.query.Where //Query
+      buildQuery: IndexSchema => com.yandex.yoctodb.query.Where //Query
     ): com.yandex.yoctodb.query.Where = buildQuery(schema)
 
     def orderBy(
-      buildQuery: IndexSchema ⇒ com.yandex.yoctodb.query.Select
+      buildQuery: IndexSchema => com.yandex.yoctodb.query.Select
     ): com.yandex.yoctodb.query.Select = buildQuery(schema)
   }
 }
@@ -73,15 +73,15 @@ trait ColumnOps[A] {
   def name: String = parse(index)
 
   private def parse(ind: GamesSchema.Index): String = ind match {
-    case Index.Stage(v)    ⇒ v.companion.scalaDescriptor.name
-    case Index.AwayTeam(v) ⇒ v.companion.scalaDescriptor.name
-    case Index.HomeTeam(v) ⇒ v.companion.scalaDescriptor.name
-    case Index.Time(v)     ⇒ v.companion.scalaDescriptor.name
-    case Index.Winner(v)   ⇒ v.companion.scalaDescriptor.name
-    case Index.Year(v)     ⇒ v.companion.scalaDescriptor.name
-    case Index.Month(v)    ⇒ v.companion.scalaDescriptor.name
-    case Index.Day(v)      ⇒ v.companion.scalaDescriptor.name
+    case Index.Stage(v)    => v.companion.scalaDescriptor.name
+    case Index.AwayTeam(v) => v.companion.scalaDescriptor.name
+    case Index.HomeTeam(v) => v.companion.scalaDescriptor.name
+    case Index.Time(v)     => v.companion.scalaDescriptor.name
+    case Index.Winner(v)   => v.companion.scalaDescriptor.name
+    case Index.Year(v)     => v.companion.scalaDescriptor.name
+    case Index.Month(v)    => v.companion.scalaDescriptor.name
+    case Index.Day(v)      => v.companion.scalaDescriptor.name
     //case Index.Fake(v)     ⇒ v.companion.scalaDescriptor.name
-    case Index.Empty ⇒ EmptyColumn
+    case Index.Empty => EmptyColumn
   }
 }

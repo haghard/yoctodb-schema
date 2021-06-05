@@ -6,4 +6,4 @@ addSbtPlugin("ch.epfl.scala"      %   "sbt-scalafix"    % "0.9.28")
 addSbtPlugin("io.github.davidgregory084" % "sbt-tpolecat" % "0.1.17")
 
 
-libraryDependencies += "com.thesamet.scalapb" %% "compilerplugin" % "0.11.2"
+libraryDependencies += "com.thesamet.scalapb" %% "compilerplugin" % "0.11.3"

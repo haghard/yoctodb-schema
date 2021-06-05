@@ -12,7 +12,7 @@ import com.yandex.yoctodb.query.QueryBuilder.gte
 import com.yandex.yoctodb.query.QueryBuilder.in
 import com.yandex.yoctodb.query.QueryBuilder.lt
 import com.yandex.yoctodb.query.QueryBuilder.lte
-import com.yandex.yoctodb.query.QueryBuilder.{eq ⇒ equal}
+import com.yandex.yoctodb.query.QueryBuilder.{eq => equal}
 import com.yandex.yoctodb.util.UnsignedByteArrays.from
 import com.yandex.yoctodb.v1.immutable.V1Database
 import yoctodb.schema.games.v1.GamesSchema
@@ -135,10 +135,10 @@ object GamesIndex {
   }*/
 
   def checkFilteredSegment(db: V1Database, columns: Set[String]): Boolean =
-    columns.forall(column ⇒ db.getFilter(column).ne(null))
+    columns.forall(column => db.getFilter(column).ne(null))
 
   def checkSortedSegment(db: V1Database, columns: Set[String]): Boolean =
-    columns.forall(column ⇒ db.getSorter(column).ne(null))
+    columns.forall(column => db.getSorter(column).ne(null))
 
   /** In order to declare this index as "safe to use" all fields from `columnsFromSchema` should be
     * presented in `columnsFromIndex`
@@ -153,58 +153,58 @@ object GamesIndex {
   ): String = {
     def indType(indexType: GamesSchema.IndexType) =
       indexType match {
-        case IndexType.Filterable      ⇒ "Filterable"
-        case IndexType.Sortable        ⇒ "Sortable"
-        case IndexType.Both            ⇒ "Both"
-        case IndexType.Unrecognized(_) ⇒ "Unrecognized"
+        case IndexType.Filterable      => "Filterable"
+        case IndexType.Sortable        => "Sortable"
+        case IndexType.Both            => "Both"
+        case IndexType.Unrecognized(_) => "Unrecognized"
       }
 
     def fieldType(fieldType: GamesSchema.FieldType): String =
       fieldType match {
-        case FieldType.Str             ⇒ "Str"
-        case FieldType.Integer         ⇒ "Int"
-        case FieldType.Dbl             ⇒ "Double"
-        case FieldType.Lng             ⇒ "Long"
-        case FieldType.Bytes           ⇒ "Bts"
-        case FieldType.Unrecognized(_) ⇒ "Unrecognized"
+        case FieldType.Str             => "Str"
+        case FieldType.Integer         => "Int"
+        case FieldType.Dbl             => "Double"
+        case FieldType.Lng             => "Long"
+        case FieldType.Bytes           => "Bts"
+        case FieldType.Unrecognized(_) => "Unrecognized"
       }
 
     "\n" +
     columnsFromIndex
-      .map { name ⇒
+      .map { name =>
         IndexColumns
-          .find { i ⇒
+          .find { i =>
             i match {
-              case Index.Stage(v)    ⇒ v.companion.scalaDescriptor.name == name
-              case Index.AwayTeam(v) ⇒ v.companion.scalaDescriptor.name == name
-              case Index.HomeTeam(v) ⇒ v.companion.scalaDescriptor.name == name
-              case Index.Time(v)     ⇒ v.companion.scalaDescriptor.name == name
-              case Index.Winner(v)   ⇒ v.companion.scalaDescriptor.name == name
-              case Index.Year(v)     ⇒ v.companion.scalaDescriptor.name == name
-              case Index.Month(v)    ⇒ v.companion.scalaDescriptor.name == name
-              case Index.Day(v)      ⇒ v.companion.scalaDescriptor.name == name
-              case Index.Empty       ⇒ false
+              case Index.Stage(v)    => v.companion.scalaDescriptor.name == name
+              case Index.AwayTeam(v) => v.companion.scalaDescriptor.name == name
+              case Index.HomeTeam(v) => v.companion.scalaDescriptor.name == name
+              case Index.Time(v)     => v.companion.scalaDescriptor.name == name
+              case Index.Winner(v)   => v.companion.scalaDescriptor.name == name
+              case Index.Year(v)     => v.companion.scalaDescriptor.name == name
+              case Index.Month(v)    => v.companion.scalaDescriptor.name == name
+              case Index.Day(v)      => v.companion.scalaDescriptor.name == name
+              case Index.Empty       => false
               //case Index.Fake(v)     ⇒ v.companion.scalaDescriptor.name == name
             }
           }
           .map {
-            case Index.Stage(v) ⇒
+            case Index.Stage(v) =>
               "[" + v.companion.scalaDescriptor.name + ":" + fieldType(v.`type`) + ":" + indType(v.indexType) + "]"
-            case Index.AwayTeam(v) ⇒
+            case Index.AwayTeam(v) =>
               "[" + v.companion.scalaDescriptor.name + ":" + fieldType(v.`type`) + ":" + indType(v.indexType) + "]"
-            case Index.HomeTeam(v) ⇒
+            case Index.HomeTeam(v) =>
               "[" + v.companion.scalaDescriptor.name + ":" + fieldType(v.`type`) + ":" + indType(v.indexType) + "]"
-            case Index.Time(v) ⇒
+            case Index.Time(v) =>
               "[" + v.companion.scalaDescriptor.name + ":" + fieldType(v.`type`) + ":" + indType(v.indexType) + "]"
-            case Index.Winner(v) ⇒
+            case Index.Winner(v) =>
               "[" + v.companion.scalaDescriptor.name + ":" + fieldType(v.`type`) + ":" + indType(v.indexType) + "]"
-            case Index.Year(v) ⇒
+            case Index.Year(v) =>
               "[" + v.companion.scalaDescriptor.name + ":" + fieldType(v.`type`) + ":" + indType(v.indexType) + "]"
-            case Index.Month(v) ⇒
+            case Index.Month(v) =>
               "[" + v.companion.scalaDescriptor.name + ":" + fieldType(v.`type`) + ":" + indType(v.indexType) + "]"
-            case Index.Day(v) ⇒
+            case Index.Day(v) =>
               "[" + v.companion.scalaDescriptor.name + ":" + fieldType(v.`type`) + ":" + indType(v.indexType) + "]"
-            case Index.Empty ⇒ ""
+            case Index.Empty => ""
             //case Index.Fake(v) ⇒ "[" + v.companion.scalaDescriptor.name + ":" + fieldType(v.`type`) + ":" + indType(v.indexType) + "]"
           }
       }

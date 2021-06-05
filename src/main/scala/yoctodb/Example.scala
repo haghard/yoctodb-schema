@@ -7,7 +7,7 @@ package yoctodb
 import com.typesafe.scalalogging.StrictLogging
 import com.yandex.yoctodb.DatabaseFormat
 import com.yandex.yoctodb.immutable.Database
-import com.yandex.yoctodb.query.{QueryBuilder ⇒ yocto}
+import com.yandex.yoctodb.query.{QueryBuilder => yocto}
 import com.yandex.yoctodb.util.buf.Buffer
 import com.yandex.yoctodb.v1.immutable.V1Database
 import yoctodb.schema.games.v1.NbaResultPB
@@ -42,7 +42,7 @@ object Example extends App with StrictLogging {
   def exec(yoctoDb: V1Database, yoctoQuery: com.yandex.yoctodb.query.Query) =
     yoctoDb.execute(
       yoctoQuery,
-      (docId: Int, _: Database) ⇒ {
+      (docId: Int, _: Database) => {
         //val payload: com.yandex.yoctodb.util.buf.Buffer = yoctoDb.getFieldValue(docId, InfoColumnName)
         //val result                                      = new String(payload.toByteArray)
         //logger.debug(result)
@@ -73,28 +73,28 @@ object Example extends App with StrictLogging {
 
   Validation
     .validateWith(loadIndex(), stage("season-18-19"), stage("season-19-20"), team("lal"), team("gsw")) {
-      (yoctoDb, ses18_19, ses19_20, lal, gsw) ⇒ (yoctoDb, ses18_19, ses19_20, lal, gsw)
+      (yoctoDb, ses18_19, ses19_20, lal, gsw) => (yoctoDb, ses18_19, ses19_20, lal, gsw)
     }
-    .flatMap { case (yoctoDb, ses18_19, ses19_20, lal, gsw) ⇒
+    .flatMap { case (yoctoDb, ses18_19, ses19_20, lal, gsw) =>
       logger.warn("Index schema layout")
       logger.info(showSchema(Filterable.columns ++ Sortable.columns))
-      isValidSchema(yoctoDb).map(_ ⇒ (yoctoDb, ses18_19, ses19_20, lal, gsw))
+      isValidSchema(yoctoDb).map(_ => (yoctoDb, ses18_19, ses19_20, lal, gsw))
     } match {
-    case ZValidation.Failure(_, errors) ⇒
+    case ZValidation.Failure(_, errors) =>
       logger.error(errors.toChunk.mkString(","))
-    case ZValidation.Success(_, params) ⇒
+    case ZValidation.Success(_, params) =>
       logger.warn("Index schema validated")
 
       val (yoctoDb, ses18_19, ses19_20, lal, gsw) = params
 
-      val yoctoQuery = GamesIndex.Sortable.orderBy { s ⇒
+      val yoctoQuery = GamesIndex.Sortable.orderBy { s =>
         //val gameTime = s.column[GameTime].term
         val yyyy  = s.column[Year].term
         val month = s.column[Month].term
         val day   = s.column[Day].term
 
         GamesIndex.Filterable
-          .where { s ⇒
+          .where { s =>
             val stage    = s.column[FullStage].term
             val homeTeam = s.column[HomeTeam].term
             val awayTeam = s.column[AwayTeam].term

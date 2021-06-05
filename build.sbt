@@ -57,8 +57,7 @@ libraryDependencies ++= Seq(
   ("com.lihaoyi" % "ammonite" % "2.3.8-124-2da846d2"  % "test").cross(CrossVersion.full)
 )
 
-Compile / scalacOptions --= Seq("-Xfatal-warnings", "-Ywarn-unused:imports", "-Yno-imports", "-deprecation")
-//console / scalacOptions --= Seq("-Xfatal-warnings", "-Ywarn-unused:imports", "-Yno-imports", "-deprecation")
+//Compile / scalacOptions --= Seq("-Xfatal-warnings", "-Ywarn-unused:imports", "-Yno-imports", "-deprecation")
 
 promptTheme := ScalapenosTheme
 
