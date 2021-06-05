@@ -37,10 +37,6 @@ object GamesIndex {
   private val IndexColumns: Set[GamesSchema.Index] =
     Set(stage, homeTeam, awayTeam, winner, year, month, day, time /*, fake*/ )
 
-  def stage(v: String): Validation[String, Stage] = Stage.make(v)
-
-  def team(v: String): Validation[String, Team] = Team.make(v)
-
   //Precisely defined filterable schema as a value
   val Filterable =
     Column(FullStage()) ++ Column(AwayTeam()) ++ Column(HomeTeam()) ++ Column(GameWinner()) ++ Column(Year()) ++ Column(
@@ -129,7 +125,9 @@ object GamesIndex {
     val term = EmptyTermOps
   }
 
-  /*final case class Fake(index: GamesSchema.Index = fake) extends ColumnOps[String] {
+  /*final case class Fake(
+    index: GamesSchema.Index = fake)
+  ) extends ColumnOps[String] {
     val term = new InEquality[String] {
       def eq$(team: String)       = equal(name, from(team))
       def in$(teams: Set[String]) = in(name, teams.map(from(_)).toSeq: _*)
@@ -213,4 +211,8 @@ object GamesIndex {
       .flatten
       .mkString("\n")
   }
+
+  def stage(v: String): Validation[String, Stage] = Stage.make(v)
+
+  def team(v: String): Validation[String, Team] = Team.make(v)
 }

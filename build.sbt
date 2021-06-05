@@ -23,7 +23,7 @@ lazy val scalacSettings = Seq(
   )
 )
 
-lazy val commonSettings = scalacSettings ++ Seq(
+lazy val commonSettings = /*scalacSettings ++*/ Seq(
   name := "yoctodb-schema",
   organization := "haghard",
   version := "0.0.1-SNAPSHOT",
@@ -40,6 +40,8 @@ lazy val commonSettings = scalacSettings ++ Seq(
   ))
 )
 
+resolvers ++= Seq(Resolver.jcenterRepo, "Sonatype Public" at "https://oss.sonatype.org/content/groups/public/")
+
 unmanagedBase := baseDirectory.value / "lib"
 
 libraryDependencies ++= Seq(
@@ -55,7 +57,8 @@ libraryDependencies ++= Seq(
   ("com.lihaoyi" % "ammonite" % "2.3.8-124-2da846d2"  % "test").cross(CrossVersion.full)
 )
 
-resolvers ++= Seq(Resolver.jcenterRepo, "Sonatype Public" at "https://oss.sonatype.org/content/groups/public/")
+Compile / scalacOptions --= Seq("-Xfatal-warnings", "-Ywarn-unused:imports", "-Yno-imports", "-deprecation")
+//console / scalacOptions --= Seq("-Xfatal-warnings", "-Ywarn-unused:imports", "-Yno-imports", "-deprecation")
 
 promptTheme := ScalapenosTheme
 

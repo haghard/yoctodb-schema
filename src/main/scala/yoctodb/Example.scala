@@ -28,7 +28,7 @@ object Example extends App with StrictLogging {
   val EasternTime = java.time.ZoneId.of("America/New_York") //UTC-4
   //val MoscowTime = java.time.ZoneId.of("Europe/Moscow") //UTC+3.
 
-  private def loadIndex(): Validation[String, V1Database] = {
+  def loadIndex(): Validation[String, V1Database] = {
     val indexFile = Paths.get(indexPath).toFile
     if (indexFile.exists && indexFile.isFile) {
       val reader = DatabaseFormat.getCurrent.getDatabaseReader
@@ -39,7 +39,7 @@ object Example extends App with StrictLogging {
     } else Validation.fail(s"Couldn't find or open file $indexPath")
   }
 
-  private def exec(yoctoDb: V1Database, yoctoQuery: com.yandex.yoctodb.query.Query) =
+  def exec(yoctoDb: V1Database, yoctoQuery: com.yandex.yoctodb.query.Query) =
     yoctoDb.execute(
       yoctoQuery,
       (docId: Int, _: Database) ⇒ {
@@ -63,10 +63,12 @@ object Example extends App with StrictLogging {
     */
   def isValidSchema(yoctoDb: V1Database): Validation[String, Boolean] =
     Validation.validateWith(
-      Validation.fromPredicateWith("Filterable schema mismatch")(checkFilteredSegment(yoctoDb, Filterable.columns))(
+      Validation.fromPredicateWith("Filterable schema mismatch !")(checkFilteredSegment(yoctoDb, Filterable.columns))(
         identity
       ),
-      Validation.fromPredicateWith("Sortable schema mismatch")(checkSortedSegment(yoctoDb, Sortable.columns))(identity)
+      Validation.fromPredicateWith("Sortable schema mismatch !")(checkSortedSegment(yoctoDb, Sortable.columns))(
+        identity
+      )
     )(_ && _)
 
   Validation
