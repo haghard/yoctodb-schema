@@ -39,6 +39,9 @@ object Column {
     * Column[Time] with Column[Day] <: Column[ColumnOps[_]]
     * Column[Time] with Column[Day] <: Column[Time]
     * Column[Time] with Column[Day] <: Column[Day]
+    *
+    * implicitly[Column[GamesIndex.AwayTeam] <:< Column[_]]
+    * implicitly[Column[GamesIndex.AwayTeam] with Column[GamesIndex.Day] <:< Column[GamesIndex.Day]]
     */
   implicit class SchemaColumnSyntax[IndexSchema <: Column[_]](val schema: IndexSchema) extends AnyVal {
 

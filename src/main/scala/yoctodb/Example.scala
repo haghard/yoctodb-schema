@@ -17,6 +17,7 @@ import java.nio.file.Paths
 import java.time.Instant
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import scala.util.Try
 
 import GamesIndex._
 
@@ -28,16 +29,21 @@ object Example extends App with StrictLogging {
   val EasternTime = java.time.ZoneId.of("America/New_York") //UTC-4
   //val MoscowTime = java.time.ZoneId.of("Europe/Moscow") //UTC+3.
 
-  def loadIndex(): Validation[String, V1Database] = {
-    val indexFile = Paths.get(indexPath).toFile
-    if (indexFile.exists && indexFile.isFile) {
-      val reader = DatabaseFormat.getCurrent.getDatabaseReader
-      val db     = reader.from(Buffer.mmap(indexFile, false))
-      logger.warn("* * * Index size: {} MB  * * *", indexFile.length() / (1024 * 1024))
-      logger.warn("* * * Docs number: {} * * *", db.getDocumentCount)
-      Validation.succeed(db.asInstanceOf[V1Database])
-    } else Validation.fail(s"Couldn't find or open file $indexPath")
-  }
+  def loadIndex(): Validation[String, V1Database] =
+    Validation
+      .fromTry(
+        Try {
+          val indexFile = Paths.get(indexPath).toFile
+          if (indexFile.exists && indexFile.isFile) {
+            val reader = DatabaseFormat.getCurrent.getDatabaseReader
+            val db     = reader.from(Buffer.mmap(indexFile, false))
+            logger.warn("* * * Index size: {} MB  * * *", indexFile.length() / (1024 * 1024))
+            logger.warn("* * * Docs number: {} * * *", db.getDocumentCount)
+            db.asInstanceOf[V1Database]
+          } else throw new Exception(s"Couldn't find or open file $indexPath")
+        }
+      )
+      .mapError(_.getMessage)
 
   def exec(yoctoDb: V1Database, yoctoQuery: com.yandex.yoctodb.query.Query) =
     yoctoDb.execute(
