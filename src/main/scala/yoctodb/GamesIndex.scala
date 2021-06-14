@@ -25,9 +25,6 @@ object GamesIndex:
   val PayloadColumnName = "g_payload"
   val InfoColumnName = "g_info"
 
-  //private val fake     = Index.Fake(games_fake(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable))
-  //private val IndexColumns: Set[GamesSchema.Index] = Set(stage, homeTeam, awayTeam, winner, year, month, day, time /*, fake*/ )
-
   val fullStage =
     FullStage(Index.Stage(games_stage(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable)))
 
@@ -53,7 +50,8 @@ object GamesIndex:
       Index.Winner(games_winner(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable))
     )
 
-  //private val fake     = Fake(Index.Fake(games_fake(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable)))
+  //val fake     = Fake(Index.Fake(games_fake(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable)))
+
   val IndexColumns: Set[GamesSchema.Index] =
     Set(
       fullStage.index,
@@ -72,7 +70,7 @@ object GamesIndex:
       winner
     ) ++ Column(
       year
-    ) ++ Column(month) ++ Column(day) //++ Column(fake)
+    ) ++ Column(month) ++ Column(day)
 
   //Sortable schema as a value
   val Sortable = Column(time) ++ Column(year) ++ Column(month) ++ Column(day)

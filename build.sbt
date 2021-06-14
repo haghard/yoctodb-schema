@@ -7,16 +7,18 @@ lazy val `yoctodb-schema` =
 lazy val scalac3Settings = Seq(
   scalacOptions ++= Seq(
     "-target:jvm-14",
-    //"-deprecation",
     "-feature",
     "-language:implicitConversions",
     "-unchecked",
+    //"-deprecation",
     //"-Xfatal-warnings",
     //"-Yexplicit-nulls",
     "-Ykind-projector",
     //"-Ysafe-init",
-    "-rewrite", "-indent",
-    "-source", "future"
+    "-rewrite",
+    "-indent",
+    "-source",
+    "future"
   )
 )
 

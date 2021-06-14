@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory
 
 import GamesIndex.*
 
-//runMain  yoctodb.Example
+//runMain yoctodb.Example
 object Example:
 
   val logger = LoggerFactory.getLogger("app")
@@ -137,9 +137,10 @@ object Example:
                 )
             }
             .orderBy(gameTime.descOrd)
+            .limit(10)
         //.orderBy(yyyy.descOrd)
         //.and(month.descOrd)
-        //.and(day.descOrd) //.limit(10) gameTime
+        //.and(day.descOrd)
         }
 
         exec(yoctoDb, yoctoQuery)
