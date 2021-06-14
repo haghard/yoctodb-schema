@@ -1,6 +1,24 @@
 import sbt._
 
-lazy val `yoctodb-schema` = (project in file(".")).settings(commonSettings)
+lazy val `yoctodb-schema` =
+  (project in file("."))
+    .settings(commonSettings)
+
+lazy val scalac3Settings = Seq(
+  scalacOptions ++= Seq(
+    "-target:jvm-14",
+    //"-deprecation",
+    "-feature",
+    "-language:implicitConversions",
+    "-unchecked",
+    //"-Xfatal-warnings",
+    //"-Yexplicit-nulls",
+    "-Ykind-projector",
+    //"-Ysafe-init",
+    "-rewrite", "-indent",
+    "-source", "future"
+  )
+)
 
 lazy val scalacSettings = Seq(
   scalacOptions ++= Seq(
@@ -23,14 +41,14 @@ lazy val scalacSettings = Seq(
   )
 )
 
-lazy val commonSettings = /*scalacSettings ++*/ Seq(
+lazy val commonSettings = scalac3Settings ++ Seq(
   name := "yoctodb-schema",
   organization := "haghard",
   version := "0.0.1-SNAPSHOT",
   startYear := Some(2021),
   //sbt headerCreate
   licenses += ("Apache-2.0", new URL("https://www.apache.org/licenses/LICENSE-2.0.txt")),
-  scalaVersion := "2.13.6",
+  scalaVersion := "3.0.0",
   headerMappings := headerMappings.value + (HeaderFileType.scala -> HeaderCommentStyle.cppStyleLineComment),
   headerLicense  := Some(HeaderLicense.Custom(
     """|Copyright (c) 2021 by Vadim Bondarev
@@ -47,8 +65,7 @@ unmanagedBase := baseDirectory.value / "lib"
 libraryDependencies ++= Seq(
   //"dev.zio" %% "izumi-reflect" % "1.1.2",
   "com.typesafe" % "config" % "1.4.1",
-
-  "com.typesafe.scala-logging" %% "scala-logging" % "3.9.3",
+  
   "ch.qos.logback" % "logback-classic" % "1.2.3",
 
   "com.yandex.yoctodb" % "yoctodb-core" % "0.0.19",
@@ -71,17 +88,6 @@ Test / sourceGenerators += Def.task {
   Seq(file)
 }.taskValue
 
-
 Compile / PB.targets := Seq(
   scalapb.gen() -> (Compile / sourceManaged).value
 )
-
-ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.5.0"
-
-// Scalafix
-
-Global / semanticdbEnabled := true
-Global / semanticdbVersion := scalafixSemanticdb.revision
-Global / watchAntiEntropy := scala.concurrent.duration.FiniteDuration(10, java.util.concurrent.TimeUnit.SECONDS)
-
-addCommandAlias("sfix", "scalafix OrganizeImports; test:scalafix OrganizeImports")
