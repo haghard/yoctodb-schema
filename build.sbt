@@ -3,18 +3,23 @@ import sbt._
 lazy val `yoctodb-schema` =
   (project in file("."))
     .settings(commonSettings)
+    .settings(
+      Test / parallelExecution := false,
+      run / fork := false,
+    )
 
 lazy val scalac3Settings = Seq(
   scalacOptions ++= Seq(
-    "-target:jvm-14",
+    //"-target:jvm-14",
     "-feature",
     "-language:implicitConversions",
-    "-unchecked",
+    //"-unchecked",
     //"-deprecation",
     //"-Xfatal-warnings",
-    //"-Yexplicit-nulls",
-    "-Ykind-projector",
+    //"-Yexplicit-nulls",  //explicit-nulls is enabled
     //"-Ysafe-init",
+    //"-language:strictEquality",
+    "-Ykind-projector",
     "-rewrite",
     "-indent",
     "-source",
@@ -93,3 +98,5 @@ Test / sourceGenerators += Def.task {
 Compile / PB.targets := Seq(
   scalapb.gen() -> (Compile / sourceManaged).value
 )
+
+addCommandAlias("c", "compile")

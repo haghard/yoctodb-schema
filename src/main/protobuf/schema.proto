@@ -59,7 +59,7 @@ message GamesSchema {
     //}
 
     //all fields in the index
-    oneof index {
+    oneof pcolumn {
       games_stage stage = 1;
       games_at awayTeam = 2;
       games_ht homeTeam = 3;
