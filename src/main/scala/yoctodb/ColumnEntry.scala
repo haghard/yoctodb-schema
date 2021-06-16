@@ -50,7 +50,7 @@ object ColumnEntry:
       def in$(stages: Set[String]) = multiEquality(columnName, stages.map(from(_)).toSeq*)
     }
 
-  final class AwayTeam(
+  final case class AwayTeam(
       val protoColumn: Pcolumn = Pcolumn.AwayTeam(games_at(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable))
     ) extends ColumnEntry[String]:
     val term: Filterable[String] = new Filterable[String] {
@@ -58,7 +58,7 @@ object ColumnEntry:
       def in$(teams: Set[String]) = multiEquality(columnName, teams.map(from(_)).toSeq*)
     }
 
-  final class HomeTeam(
+  final case class HomeTeam(
       val protoColumn: Pcolumn = Pcolumn.HomeTeam(games_ht(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable))
     ) extends ColumnEntry[String]:
     val term: Filterable[String] = new Filterable[String] {
@@ -66,10 +66,10 @@ object ColumnEntry:
       def in$(teams: Set[String]) = multiEquality(columnName, teams.map(from(_)).toSeq*)
     }
 
-  final class Year(
+  final case class Year(
       val protoColumn: Pcolumn = Pcolumn.Year(games_yy(GamesSchema.FieldType.Integer, GamesSchema.IndexType.Both))
     ) extends ColumnEntry[Int]:
-    val term: BothNum[Int] = new BothNum[Int] {
+    val term: BothNums[Int] = new BothNums[Int] {
       def gt$(yy: Int) = greaterThan(columnName, from(yy))
       def gte$(yy: Int) = greateOrEqThan(columnName, from(yy))
       def lt$(yy: Int) = lesserThan(columnName, from(yy))
@@ -80,10 +80,10 @@ object ColumnEntry:
       val ascOrd: Order = asc(columnName)
     }
 
-  final class Month(
+  final case class Month(
       val protoColumn: Pcolumn = Pcolumn.Month(games_mm(GamesSchema.FieldType.Integer, GamesSchema.IndexType.Both))
     ) extends ColumnEntry[Int]:
-    val term: BothNum[Int] = new BothNum[Int] {
+    val term: BothNums[Int] = new BothNums[Int] {
       def gt$(month: Int) = greaterThan(columnName, from(month))
       def gte$(month: Int) = greateOrEqThan(columnName, from(month))
       def lt$(month: Int) = lesserThan(columnName, from(month))
@@ -94,10 +94,10 @@ object ColumnEntry:
       val ascOrd: Order = asc(columnName)
     }
 
-  final class Day(
+  final case class Day(
       val protoColumn: Pcolumn = Pcolumn.Day(games_dd(GamesSchema.FieldType.Integer, GamesSchema.IndexType.Both))
     ) extends ColumnEntry[Int]:
-    val term: BothNum[Int] = new BothNum[Int] {
+    val term: BothNums[Int] = new BothNums[Int] {
       def gt$(day: Int) = greaterThan(columnName, from(day))
       def gte$(day: Int) = greateOrEqThan(columnName, from(day))
       def lt$(day: Int) = lesserThan(columnName, from(day))
@@ -108,7 +108,7 @@ object ColumnEntry:
       val ascOrd: Order = asc(columnName)
     }
 
-  final class GameWinner(
+  final case class GameWinner(
       val protoColumn: Pcolumn = Pcolumn.Winner(games_winner(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable))
     ) extends ColumnEntry[String]:
     val term: Filterable[String] = new Filterable[String] {
@@ -116,7 +116,7 @@ object ColumnEntry:
       def in$(teams: Set[String]) = multiEquality(columnName, teams.map(from(_)).toSeq*)
     }
 
-  final class GameTime(
+  final case class GameTime(
       val protoColumn: Pcolumn = Pcolumn.Time(games_ts(GamesSchema.FieldType.Lng, GamesSchema.IndexType.Sortable))
     ) extends ColumnEntry[Long]:
     val term: Sortable[Long] = new Sortable[Long] {
@@ -124,10 +124,12 @@ object ColumnEntry:
       val ascOrd = asc(columnName)
     }
 
-  final class Empty(val protoColumn: Pcolumn = Pcolumn.Empty) extends ColumnEntry[Nothing]:
+  final case class Empty(val protoColumn: Pcolumn = Pcolumn.Empty) extends ColumnEntry[Nothing]:
     val term = EmptyTermOps
 
-/*final class Fake extends ColumnOps[String](Pcolumn.Fake(games_fake(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable))) {
+/*final class class Fake(
+  val protoColumn: Pcolumn = Pcolumn.Fake(games_fake(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable)))
+) extends ColumnOps[String]
   val term = new InEquality[String] {
     def eq$(team: String)       = equal(fieldName, from(team))
     def in$(teams: Set[String]) = inside(fieldName, teams.map(from(_)).toSeq: _*)

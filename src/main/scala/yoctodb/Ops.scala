@@ -10,10 +10,7 @@ sealed trait Ops[T]
 
 object EmptyTermOps extends Ops[Nothing]
 
-//InEquality
-//com.yandex.yoctodb.mutable.DocumentBuilder.IndexOption.FILTERABLE
-//FILTERABLE -- the field can be used to filter documents
-
+//com.yandex.yoctodb.mutable.DocumentBuilder.IndexOption.FILTERABLE -- the field can be used to filter documents
 trait Filterable[T] extends Ops[T]:
 
   def eq$(v: T): com.yandex.yoctodb.query.TermCondition
@@ -23,7 +20,7 @@ trait Filterable[T] extends Ops[T]:
 
   def in$(vs: scala.collection.immutable.Set[T]): com.yandex.yoctodb.query.TermCondition
 
-trait FilterableNum[T] extends Filterable[T]:
+trait FilterableNum[T](using n: Numeric[T]) extends Filterable[T]:
 
   def gt$(v: T): com.yandex.yoctodb.query.TermCondition
 
@@ -33,8 +30,7 @@ trait FilterableNum[T] extends Filterable[T]:
 
   def lte$(v: T): com.yandex.yoctodb.query.TermCondition
 
-//static com.yandex.yoctodb.mutable.DocumentBuilder.IndexOption.SORTABLE
-//SORTABLE -- the field can be used to sort documents
+//com.yandex.yoctodb.mutable.DocumentBuilder.IndexOption.SORTABLE -- the field can be used to sort documents
 trait Sortable[T] extends Ops[T]:
 
   def descOrd: com.yandex.yoctodb.query.Order
@@ -42,6 +38,7 @@ trait Sortable[T] extends Ops[T]:
   def ascOrd: com.yandex.yoctodb.query.Order
 
 //FILTERABLE and SORTABLE
-trait BothNum[T] extends FilterableNum[T] with Sortable[T]
+trait BothNums[T](using n: Numeric[T]) extends FilterableNum[T] with Sortable[T]
 
-trait BothStr extends Filterable[String] with Sortable[String]
+//FILTERABLE and SORTABLE
+trait BothChars[T](using T <:< java.lang.CharSequence) extends Filterable[T] with Sortable[T]
