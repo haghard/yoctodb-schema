@@ -44,12 +44,8 @@ object GamesIndex:
     )
 
   //Precisely defined filterable schema as a value
-  val Filterable =
-    Column(fullStage) ++ Column(awayTeam) ++ Column(homeTeam) ++ Column(
-      winner
-    ) ++ Column(
-      year
-    ) ++ Column(month) ++ Column(day) //++ Fake(fake)
+  val Filterable = Column(fullStage) ++ Column(awayTeam) ++ Column(homeTeam) ++ Column(winner) ++ Column(year)
+    ++ Column(month) ++ Column(day) //++ Fake(fake)
 
   //Sortable schema as a value
   val Sortable = Column(gameTime) ++ Column(year) ++ Column(month) ++ Column(day)
