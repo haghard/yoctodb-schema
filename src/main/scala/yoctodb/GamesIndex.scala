@@ -12,7 +12,7 @@ import yoctodb.schema.games.v1.GamesSchema
 import yoctodb.schema.games.v1.GamesSchema.*
 import yoctodb.schema.games.v1.GamesSchema.Pcolumn
 import zio.prelude.Validation
-import ColumnEntry.*
+import CEntry.*
 
 object GamesIndex:
 

@@ -21,7 +21,7 @@ import scala.util.Try
 import org.slf4j.LoggerFactory
 
 import GamesIndex.*
-import ColumnEntry.*
+import CEntry.*
 
 //object Example:
 
@@ -113,7 +113,7 @@ def isValidSchema(yoctoDb: V1Database): Validation[String, Boolean] =
       val (yoctoDb, ses18_19, ses19_20, lal, gsw) = params
 
       val yoctoQuery = GamesIndex.Sortable.orderBy { s =>
-        val gameTime = s.column[ColumnEntry.GameTime].term
+        val gameTime = s.column[GameTime].term
         //val yyyy = s.column[Year].term
         //val month = s.column[Month].term
         //val day = s.column[Day].term

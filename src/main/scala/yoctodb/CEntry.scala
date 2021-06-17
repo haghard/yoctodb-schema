@@ -19,7 +19,7 @@ import yoctodb.schema.games.v1.GamesSchema
 import yoctodb.schema.games.v1.GamesSchema.*
 import yoctodb.schema.games.v1.GamesSchema.Pcolumn
 
-sealed trait ColumnEntry[A]:
+sealed trait CEntry[A]:
 
   def protoColumn: Pcolumn
 
@@ -40,11 +40,11 @@ sealed trait ColumnEntry[A]:
       case Pcolumn.Empty       => yoctodb.EmptyColumn
 //case Index.Fake(v)     => v.companion.scalaDescriptor.name
 
-object ColumnEntry:
+object CEntry:
 
   final case class FullStage(
       val protoColumn: Pcolumn = Pcolumn.Stage(games_stage(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable))
-    ) extends ColumnEntry[String]:
+    ) extends CEntry[String]:
     val term: Filterable[String] = new Filterable[String] {
       def eq$(stageName: String) = equality(columnName, from(stageName))
       def in$(stages: Set[String]) = multiEquality(columnName, stages.map(from(_)).toSeq*)
@@ -52,7 +52,7 @@ object ColumnEntry:
 
   final case class AwayTeam(
       val protoColumn: Pcolumn = Pcolumn.AwayTeam(games_at(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable))
-    ) extends ColumnEntry[String]:
+    ) extends CEntry[String]:
     val term: Filterable[String] = new Filterable[String] {
       def eq$(team: String) = equality(columnName, from(columnName))
       def in$(teams: Set[String]) = multiEquality(columnName, teams.map(from(_)).toSeq*)
@@ -60,7 +60,7 @@ object ColumnEntry:
 
   final case class HomeTeam(
       val protoColumn: Pcolumn = Pcolumn.HomeTeam(games_ht(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable))
-    ) extends ColumnEntry[String]:
+    ) extends CEntry[String]:
     val term: Filterable[String] = new Filterable[String] {
       def eq$(team: String) = equality(columnName, from(team))
       def in$(teams: Set[String]) = multiEquality(columnName, teams.map(from(_)).toSeq*)
@@ -68,7 +68,7 @@ object ColumnEntry:
 
   final case class Year(
       val protoColumn: Pcolumn = Pcolumn.Year(games_yy(GamesSchema.FieldType.Integer, GamesSchema.IndexType.Both))
-    ) extends ColumnEntry[Int]:
+    ) extends CEntry[Int]:
     val term: BothNums[Int] = new BothNums[Int] {
       def gt$(yy: Int) = greaterThan(columnName, from(yy))
       def gte$(yy: Int) = greaterOrEqThan(columnName, from(yy))
@@ -82,7 +82,7 @@ object ColumnEntry:
 
   final case class Month(
       val protoColumn: Pcolumn = Pcolumn.Month(games_mm(GamesSchema.FieldType.Integer, GamesSchema.IndexType.Both))
-    ) extends ColumnEntry[Int]:
+    ) extends CEntry[Int]:
     val term: BothNums[Int] = new BothNums[Int] {
       def gt$(month: Int) = greaterThan(columnName, from(month))
       def gte$(month: Int) = greaterOrEqThan(columnName, from(month))
@@ -96,7 +96,7 @@ object ColumnEntry:
 
   final case class Day(
       val protoColumn: Pcolumn = Pcolumn.Day(games_dd(GamesSchema.FieldType.Integer, GamesSchema.IndexType.Both))
-    ) extends ColumnEntry[Int]:
+    ) extends CEntry[Int]:
     val term: BothNums[Int] = new BothNums[Int] {
       def gt$(day: Int) = greaterThan(columnName, from(day))
       def gte$(day: Int) = greaterOrEqThan(columnName, from(day))
@@ -110,7 +110,7 @@ object ColumnEntry:
 
   final case class GameWinner(
       val protoColumn: Pcolumn = Pcolumn.Winner(games_winner(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable))
-    ) extends ColumnEntry[String]:
+    ) extends CEntry[String]:
     val term: Filterable[String] = new Filterable[String] {
       def eq$(team: String) = equality(columnName, from(team))
       def in$(teams: Set[String]) = multiEquality(columnName, teams.map(from(_)).toSeq*)
@@ -118,13 +118,13 @@ object ColumnEntry:
 
   final case class GameTime(
       val protoColumn: Pcolumn = Pcolumn.Time(games_ts(GamesSchema.FieldType.Lng, GamesSchema.IndexType.Sortable))
-    ) extends ColumnEntry[Long]:
+    ) extends CEntry[Long]:
     val term: Sortable[Long] = new Sortable[Long] {
       val descOrd = desc(columnName)
       val ascOrd = asc(columnName)
     }
 
-  final case class Empty(val protoColumn: Pcolumn = Pcolumn.Empty) extends ColumnEntry[Nothing]:
+  final case class Empty(val protoColumn: Pcolumn = Pcolumn.Empty) extends CEntry[Nothing]:
     val term = EmptyTermOps
 
 /*final class class Fake(

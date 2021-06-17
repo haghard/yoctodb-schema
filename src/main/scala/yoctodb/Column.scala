@@ -7,9 +7,9 @@ package yoctodb
 import izumi.reflect.Tag
 import yoctodb.schema.games.v1.GamesSchema
 import yoctodb.schema.games.v1.GamesSchema.*
-import ColumnEntry.*
+import CEntry.*
 
-final case class Column[+A <: ColumnEntry[?]] private (
+final case class Column[+A <: CEntry[?]] private (
     private val underlying: Map[Tag[?], A],
     private val columnNames: Set[String],
   ):
@@ -21,26 +21,26 @@ final case class Column[+A <: ColumnEntry[?]] private (
   override def toString: String = s"Schema(${columns.mkString(",")})"
 
   override def equals(obj: Any): Boolean = obj match
-    case that: Column[ColumnEntry[?]] => columns.equals(that.columns)
-    case _                            => false
+    case that: Column[CEntry[?]] => columns.equals(that.columns)
+    case _                       => false
 
 object Column:
 
-  def apply[A <: ColumnEntry[?]](value: A)(using tag: Tag[A]): Column[A] =
+  def apply[A <: CEntry[?]](value: A)(using tag: Tag[A]): Column[A] =
     new Column(Map(tag -> value), Set(value.columnName))
 
   extension [Schema <: Column[?]](schema: Schema)
 
-    def ++[B <: ColumnEntry[?]](that: Column[B]): Schema & Column[B] =
+    def ++[B <: CEntry[?]](that: Column[B]): Schema & Column[B] =
       new Column(
-        (schema.underlying ++ that.underlying).asInstanceOf[Map[Tag[?], ColumnEntry[?]]],
+        (schema.underlying ++ that.underlying).asInstanceOf[Map[Tag[?], CEntry[?]]],
         schema.columnNames ++ that.columnNames,
       ).asInstanceOf[Schema & Column[B]]
 
     //2.13.6
     //def column[T <: ColumnOps[?]](implicit ev: Schema <:< Column[T], tag: Tag[T]): T = schema.underlying(tag).asInstanceOf[T]
 
-    def column[T <: ColumnEntry[?]](using Schema => Column[T])(using tag: Tag[T]): T =
+    def column[T <: CEntry[?]](using Schema => Column[T])(using tag: Tag[T]): T =
       schema.underlying(tag).asInstanceOf[T]
 
     def where(
