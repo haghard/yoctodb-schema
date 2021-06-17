@@ -51,9 +51,9 @@ object GamesIndex:
   val Sortable = Column(gameTime) ++ Column(year) ++ Column(month) ++ Column(day)
 
   /*
-  implicitly[Column[GameTime] with Column[Day] <:< Column[Columns[?]]]
-  implicitly[Column[GameTime] <:< Column[Columns[?]]]
-  implicitly[Column[GameTime] with Column[Day] <:< Column[Columns[?]]]
+  implicitly[Column[GameTime] with Column[Day] <:< Column[ColumnEntry[?]]]
+  implicitly[Column[GameTime] <:< Column[ColumnEntry[?]]]
+  implicitly[Column[GameTime] with Column[Day] <:< Column[ColumnEntry[?]]]
   implicitly[Column[GameTime] with Column[Day] <:< Column[GameTime]]
   implicitly[Column[GameTime] with Column[Day] <:< Column[Day]]
   implicitly[Column[AwayTeam] <:< Column[?]]
