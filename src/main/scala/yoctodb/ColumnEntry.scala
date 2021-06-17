@@ -8,7 +8,7 @@ import com.yandex.yoctodb.query.Order
 import com.yandex.yoctodb.query.QueryBuilder.asc
 import com.yandex.yoctodb.query.QueryBuilder.desc
 import com.yandex.yoctodb.query.QueryBuilder.gt as greaterThan
-import com.yandex.yoctodb.query.QueryBuilder.gte as greateOrEqThan
+import com.yandex.yoctodb.query.QueryBuilder.gte as greaterOrEqThan
 import com.yandex.yoctodb.query.QueryBuilder.in as multiEquality
 import com.yandex.yoctodb.query.QueryBuilder.lt as lesserThan
 import com.yandex.yoctodb.query.QueryBuilder.lte as lesserOrEqThan
@@ -71,7 +71,7 @@ object ColumnEntry:
     ) extends ColumnEntry[Int]:
     val term: BothNums[Int] = new BothNums[Int] {
       def gt$(yy: Int) = greaterThan(columnName, from(yy))
-      def gte$(yy: Int) = greateOrEqThan(columnName, from(yy))
+      def gte$(yy: Int) = greaterOrEqThan(columnName, from(yy))
       def lt$(yy: Int) = lesserThan(columnName, from(yy))
       def lte$(yy: Int) = lesserOrEqThan(columnName, from(yy))
       def eq$(yy: Int) = equality(columnName, from(yy))
@@ -85,7 +85,7 @@ object ColumnEntry:
     ) extends ColumnEntry[Int]:
     val term: BothNums[Int] = new BothNums[Int] {
       def gt$(month: Int) = greaterThan(columnName, from(month))
-      def gte$(month: Int) = greateOrEqThan(columnName, from(month))
+      def gte$(month: Int) = greaterOrEqThan(columnName, from(month))
       def lt$(month: Int) = lesserThan(columnName, from(month))
       def lte$(month: Int) = lesserOrEqThan(columnName, from(month))
       def eq$(month: Int) = equality(columnName, from(month))
@@ -99,7 +99,7 @@ object ColumnEntry:
     ) extends ColumnEntry[Int]:
     val term: BothNums[Int] = new BothNums[Int] {
       def gt$(day: Int) = greaterThan(columnName, from(day))
-      def gte$(day: Int) = greateOrEqThan(columnName, from(day))
+      def gte$(day: Int) = greaterOrEqThan(columnName, from(day))
       def lt$(day: Int) = lesserThan(columnName, from(day))
       def lte$(day: Int) = lesserOrEqThan(columnName, from(day))
       def eq$(day: Int) = equality(columnName, from(day))
