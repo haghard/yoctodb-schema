@@ -13,15 +13,16 @@ final case class Column[+A <: CEntry[?]] private (
     private val underlying: Map[Tag[?], A],
     private val columnNames: Set[String],
   ):
+  self =>
 
-  def columns = columnNames - EmptyColumn
+  def columns = self.columnNames - EmptyColumn
 
-  def narrow = this.asInstanceOf[Column[A]]
+  def narrow = self.asInstanceOf[Column[A]]
 
   override def toString: String = s"Schema(${columns.mkString(",")})"
 
   override def equals(obj: Any): Boolean = obj match
-    case that: Column[CEntry[?]] => columns.equals(that.columns)
+    case that: Column[CEntry[?]] => self.columns.equals(that.columns)
     case _                       => false
 
 object Column:

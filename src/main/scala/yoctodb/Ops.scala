@@ -11,34 +11,45 @@ sealed trait Ops[T]
 object EmptyTermOps extends Ops[Nothing]
 
 //com.yandex.yoctodb.mutable.DocumentBuilder.IndexOption.FILTERABLE -- the field can be used to filter documents
-trait Filterable[T] extends Ops[T]:
-
+private trait Filterable[T] extends Ops[T]:
   def eq$(v: T): com.yandex.yoctodb.query.TermCondition
-
-  def notEq$(v: T): com.yandex.yoctodb.query.Condition =
-    com.yandex.yoctodb.query.QueryBuilder.not(eq$(v))
-
   def in$(vs: scala.collection.immutable.Set[T]): com.yandex.yoctodb.query.TermCondition
+  def notEq$(v: T): com.yandex.yoctodb.query.Condition = com.yandex.yoctodb.query.QueryBuilder.not(eq$(v))
 
 trait FilterableNum[T](using n: Numeric[T]) extends Filterable[T]:
-
   def gt$(v: T): com.yandex.yoctodb.query.TermCondition
-
   def gte$(v: T): com.yandex.yoctodb.query.TermCondition
-
   def lt$(v: T): com.yandex.yoctodb.query.TermCondition
-
   def lte$(v: T): com.yandex.yoctodb.query.TermCondition
 
+trait FilterableChars[T](using T <:< java.lang.CharSequence) extends Filterable[T]
+
 //com.yandex.yoctodb.mutable.DocumentBuilder.IndexOption.SORTABLE -- the field can be used to sort documents
-trait Sortable[T] extends Ops[T]:
-
+private trait Sortable[T] extends Ops[T]:
   def descOrd: com.yandex.yoctodb.query.Order
-
   def ascOrd: com.yandex.yoctodb.query.Order
 
-//FILTERABLE and SORTABLE
-trait BothNums[T](using n: Numeric[T]) extends FilterableNum[T] with Sortable[T]
+trait SortableNum[T](using n: Numeric[T]) extends Sortable[T]
+trait SortableChars[T](using T <:< java.lang.CharSequence) extends Sortable[T]
 
 //FILTERABLE and SORTABLE
-trait BothChars[T](using T <:< java.lang.CharSequence) extends Filterable[T] with Sortable[T]
+private trait Both[T] extends Ops[T]
+
+trait BothNums[T](using n: Numeric[T]) extends Both[T]:
+  def eq$(v: T): com.yandex.yoctodb.query.TermCondition
+  def notEq$(v: T): com.yandex.yoctodb.query.Condition = com.yandex.yoctodb.query.QueryBuilder.not(eq$(v))
+  def in$(vs: scala.collection.immutable.Set[T]): com.yandex.yoctodb.query.TermCondition
+  def descOrd: com.yandex.yoctodb.query.Order
+  def ascOrd: com.yandex.yoctodb.query.Order
+  def gt$(v: T): com.yandex.yoctodb.query.TermCondition
+  def gte$(v: T): com.yandex.yoctodb.query.TermCondition
+  def lt$(v: T): com.yandex.yoctodb.query.TermCondition
+  def lte$(v: T): com.yandex.yoctodb.query.TermCondition
+
+//FILTERABLE and SORTABLE
+trait BothChars[T](using T <:< java.lang.CharSequence) extends Both[T]:
+  def eq$(v: T): com.yandex.yoctodb.query.TermCondition
+  def notEq$(v: T): com.yandex.yoctodb.query.Condition = com.yandex.yoctodb.query.QueryBuilder.not(eq$(v))
+  def in$(vs: scala.collection.immutable.Set[T]): com.yandex.yoctodb.query.TermCondition
+  def descOrd: com.yandex.yoctodb.query.Order
+  def ascOrd: com.yandex.yoctodb.query.Order

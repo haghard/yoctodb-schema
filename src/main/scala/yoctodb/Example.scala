@@ -88,7 +88,7 @@ def isValidSchema(yoctoDb: V1Database): Validation[String, Boolean] =
     ),
   )(_ && _)
 
-@main def run: Unit =
+@main def app(args: String*): Unit =
   Validation
     .validateWith(
       loadIndex(),
