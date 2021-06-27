@@ -33,9 +33,9 @@ object Column:
   extension [Schema <: Column[?]](schema: Schema)
 
     inline def ++[B <: CEntry[?]](that: Column[B]): Schema & Column[B] =
-      combine(that)
+      both(that)
 
-    infix def combine[B <: CEntry[?]](that: Column[B]): Schema & Column[B] =
+    infix def both[B <: CEntry[?]](that: Column[B]): Schema & Column[B] =
       new Column(
         (schema.underlying ++ that.underlying).asInstanceOf[Map[Tag[?], CEntry[?]]],
         schema.columnNames ++ that.columnNames,
