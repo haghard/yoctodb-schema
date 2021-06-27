@@ -32,5 +32,3 @@ import predicates.*
   println(isGreaterThan(15).apply(10))
   println(isGreaterOrEqualTo(5).apply(5))
  */
-
-
