@@ -22,7 +22,7 @@ object Records:
 
   object Record:
     // use this scope to bound who can see inside the opaque type
-    opaque type Rec[A <: Tuple] = Map[Pcolumn, Ops[?]] //Replace Any
+    opaque type Rec[A <: Tuple] = Map[Pcolumn, Ops[?]]
 
     object Rec:
       type HasKey[A <: Tuple, K] =
@@ -65,7 +65,8 @@ object Records:
     val aTeam = Pcolumn.AwayTeam(games_at(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable))
     val gameTime = Pcolumn.Time(games_ts(GamesSchema.FieldType.Lng, GamesSchema.IndexType.Sortable))
 
-    val schema /*: Rec[(aTeam.type, FilterableChars[String]) *: (stage.type, BothNums[Int]) *: (time.type, SortableNum[Long]) *: EmptyTuple]*/ =
+    /*: Rec[(aTeam.type, FilterableChars[String]) *: (stage.type, BothNums[Int]) *: (time.type, SortableNum[Long]) *: EmptyTuple]*/
+    val schema =
       Rec.empty +
         (hTeam -> new FilterableChars[String] {
           val columnName = strName(hTeam)
@@ -94,11 +95,11 @@ object Records:
           val ascOrd = asc(columnName)
         })
 
-    val stageOps: BothNums[Int] = schema(stage)
-    val aTeamOps: FilterableChars[String] = schema(aTeam)
-    val hTeamOps: FilterableChars[String] = schema(hTeam)
-    val gTimeOps: SortableNum[Long] = schema(gameTime)
+    val stageTerm: BothNums[Int] = schema(stage)
+    val aTeamTerm: FilterableChars[String] = schema(aTeam)
+    val hTeamTerm: FilterableChars[String] = schema(hTeam)
+    val gTimeTerm: SortableNum[Long] = schema(gameTime)
 
-    //println(hTeamOps.eq$("111"))
+  //println(hTeamOps.eq$("111"))
 
   end main
