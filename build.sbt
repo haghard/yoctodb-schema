@@ -55,10 +55,8 @@ libraryDependencies ++= Seq(
 
   "com.thesamet.scalapb" %% "scalapb-runtime" % scalapb.compiler.Version.scalapbVersion % "protobuf",
 
-  //("com.lihaoyi" % "ammonite" % "2.3.8-124-2da846d2"  % "test").cross(CrossVersion.full)
-
   //https://repo1.maven.org/maven2/com/lihaoyi/ammonite_3.0.1/2.4.0-11-5b9ff5e7/
-  //("com.lihaoyi" % "ammonite"  % "2.4.0-11-5b9ff5e7"  % "test").cross(CrossVersion.full)
+  ("com.lihaoyi" % "ammonite"  % "2.4.0-14-4824b429"  % "test").cross(CrossVersion.full)
 )
 
 //Compile / scalacOptions --= Seq("-Xfatal-warnings", "-Ywarn-unused:imports", "-Yno-imports", "-deprecation")
