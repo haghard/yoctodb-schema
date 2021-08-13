@@ -71,8 +71,6 @@ Test / sourceGenerators += Def.task {
   Seq(file)
 }.taskValue
 
-Compile / PB.targets := Seq(
-  scalapb.gen() -> (Compile / sourceManaged).value
-)
+Compile / PB.targets := Seq(scalapb.gen() -> (Compile / sourceManaged).value)
 
 addCommandAlias("c", "compile")
