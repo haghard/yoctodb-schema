@@ -1,7 +1,6 @@
 import sbt._
 
-lazy val `yoctodb-schema` =
-  (project in file(".")).settings(commonSettings)
+lazy val `yoctodb-schema` = (project in file(".")).settings(commonSettings)
 
 lazy val scalac3Settings = Seq(
   scalacOptions ++= Seq(
