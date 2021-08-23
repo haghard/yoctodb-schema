@@ -1,20 +1,22 @@
-package yoctodb
-
-import yoctodb.schema.games.v1.GamesSchema
-import yoctodb.schema.games.v1.GamesSchema.*
-import yoctodb.schema.games.v1.GamesSchema.Pcolumn
+package yoctodb.samples
 
 import com.yandex.yoctodb.query.Order
-import com.yandex.yoctodb.query.QueryBuilder.asc
-import com.yandex.yoctodb.query.QueryBuilder.desc
-import com.yandex.yoctodb.query.QueryBuilder.gt as greaterThan
-import com.yandex.yoctodb.query.QueryBuilder.gte as greaterOrEqThan
-import com.yandex.yoctodb.query.QueryBuilder.in as multiEquality
-import com.yandex.yoctodb.query.QueryBuilder.lt as lesserThan
-import com.yandex.yoctodb.query.QueryBuilder.lte as lesserOrEqThan
-import com.yandex.yoctodb.query.QueryBuilder.eq as equality
+import com.yandex.yoctodb.query.QueryBuilder.{
+  asc,
+  desc,
+  eq as equality,
+  gt as greaterThan,
+  gte as greaterOrEqThan,
+  in as multiEquality,
+  lt as lesserThan,
+  lte as lesserOrEqThan,
+}
 import com.yandex.yoctodb.util.UnsignedByteArrays.from
 import com.yandex.yoctodb.v1.immutable.V1Database
+import yoctodb.Ops
+import yoctodb.*
+import yoctodb.schema.games.v1.GamesSchema
+import yoctodb.schema.games.v1.GamesSchema.*
 
 //Another take
 //https://gist.github.com/johnynek/1e3cbddf461bd3da9b00e2f4f126c253
@@ -143,5 +145,17 @@ object Records:
     val aTeamTerm: FilterableChars[String] = filterableSchema(aTeam)
     val hTeamTerm: FilterableChars[String] = filterableSchema(hTeam)
     val gTimeTerm: SortableNum[Long] = sortableSchema(gameTime)
+
+    /*
+    Map(
+      HomeTeam(games_ht(Str,Filterable)) -> yoctodb.samples.Records$$anon$5@75ccb827,
+      AwayTeam(games_at(Str,Filterable)) -> yoctodb.samples.Records$$anon$6@a06482,
+      Stage(games_stage(Str,Filterable)) -> yoctodb.samples.Records$$anon$7@73c5a129,
+      Winner(games_winner(Str,Filterable)) -> yoctodb.samples.Records$$anon$8@ed99d59
+    )
+     */
+    println(filterableSchema)
+
+    println(stageTerm.eq$(2))
 
   end main
