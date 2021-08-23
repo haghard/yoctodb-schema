@@ -1,16 +1,14 @@
 package yoctodb.samples
 
 import com.yandex.yoctodb.query.Order
-import com.yandex.yoctodb.query.QueryBuilder.{
-  asc,
-  desc,
-  eq as equality,
-  gt as greaterThan,
-  gte as greaterOrEqThan,
-  in as multiEquality,
-  lt as lesserThan,
-  lte as lesserOrEqThan,
-}
+import com.yandex.yoctodb.query.QueryBuilder.asc
+import com.yandex.yoctodb.query.QueryBuilder.desc
+import com.yandex.yoctodb.query.QueryBuilder.eq as equality
+import com.yandex.yoctodb.query.QueryBuilder.gt as greaterThan
+import com.yandex.yoctodb.query.QueryBuilder.gte as greaterOrEqThan
+import com.yandex.yoctodb.query.QueryBuilder.in as multiEquality
+import com.yandex.yoctodb.query.QueryBuilder.lt as lesserThan
+import com.yandex.yoctodb.query.QueryBuilder.lte as lesserOrEqThan
 import com.yandex.yoctodb.util.UnsignedByteArrays.from
 import com.yandex.yoctodb.v1.immutable.V1Database
 import yoctodb.Ops

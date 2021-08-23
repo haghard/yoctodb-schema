@@ -4,20 +4,16 @@ lazy val `yoctodb-schema` = (project in file(".")).settings(commonSettings)
 
 lazy val scalac3Settings = Seq(
   scalacOptions ++= Seq(
-    //"-target:jvm-14",
+    //"-deprecation",
     "-feature",
     "-language:implicitConversions",
     "-unchecked",
-    "-deprecation",
     //"-Xfatal-warnings",
-    //"-Yexplicit-nulls",  //explicit-nulls is enabled
-    //"-Ysafe-init",
+    //"-Yexplicit-nulls",
+    "-Wunused",
     "-Ykind-projector",
-    "-rewrite",
-    "-indent",
-    "-source",
-    "future"
-  )
+    "-Ysafe-init", //guards against forward access reference
+  ) ++ Seq("-rewrite", "-indent") ++ Seq("-source", "future")
 )
 
 lazy val commonSettings = scalac3Settings ++ Seq(
@@ -28,6 +24,8 @@ lazy val commonSettings = scalac3Settings ++ Seq(
 
   Test / parallelExecution := false,
   run / fork := false,
+
+  Compile / console / scalacOptions --= Seq("-Wunused:_", "-Xfatal-warnings"),
 
   //sbt headerCreate
   licenses += ("Apache-2.0", new URL("https://www.apache.org/licenses/LICENSE-2.0.txt")),
@@ -71,5 +69,15 @@ Test / sourceGenerators += Def.task {
 }.taskValue
 
 Compile / PB.targets := Seq(scalapb.gen() -> (Compile / sourceManaged).value)
+
+
+ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.5.0"
+
+Global / semanticdbEnabled := true
+Global / semanticdbVersion := scalafixSemanticdb.revision
+Global / watchAntiEntropy := scala.concurrent.duration.FiniteDuration(10000, java.util.concurrent.TimeUnit.MILLISECONDS)
+
+addCommandAlias("sfix", "scalafix OrganizeImports; test:scalafix OrganizeImports")
+addCommandAlias("sFixCheck", "scalafix --check OrganizeImports; test:scalafix --check OrganizeImports")
 
 addCommandAlias("c", "compile")
