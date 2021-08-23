@@ -41,19 +41,25 @@ object Column:
   extension [Schema <: Column[?]](schema: Schema)
 
     inline def ++[B <: CEntry[?]](that: Column[B]): Schema & Column[B] =
-      both(that)
+      union(that)
 
-    infix def both[B <: CEntry[?]](that: Column[B]): Schema & Column[B] =
+    infix def union[B <: CEntry[?]](that: Column[B]): Schema & Column[B] =
       new Column(
         (schema.underlying ++ that.underlying).asInstanceOf[Map[Tag[?], CEntry[?]]],
         schema.columnNames ++ that.columnNames,
       ).asInstanceOf[Schema & Column[B]]
 
-    //2.13.6
-    //def column[T <: ColumnOps[?]](implicit ev: Schema <:< Column[T], tag: Tag[T]): T = schema.underlying(tag).asInstanceOf[T]
+    /*
+      2.13.6
+      def column[T <: CEntry[?]](implicit tag: Tag[T], ev: Schema <:< Column[T]): T =
+        schema.underlying(tag).asInstanceOf[T]
 
-    //Do not chage the order of the params
-    def column[T <: CEntry[?]](using Schema => Column[T])(using tag: Tag[T]): T =
+      Or
+      def column[T <: CEntry[?]](using tag: Tag[T], ev: Schema <:< Column[T]): T =
+        schema.underlying(tag).asInstanceOf[T]
+     */
+
+    def column[T <: CEntry[?]](using tag: Tag[T], ev: Schema => Column[T]): T =
       schema.underlying(tag).asInstanceOf[T]
 
     def where(

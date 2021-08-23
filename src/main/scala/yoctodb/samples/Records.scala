@@ -16,8 +16,7 @@ import yoctodb.*
 import yoctodb.schema.games.v1.GamesSchema
 import yoctodb.schema.games.v1.GamesSchema.*
 
-//Another take
-//https://gist.github.com/johnynek/1e3cbddf461bd3da9b00e2f4f126c253
+//Another take on generic records: https://gist.github.com/johnynek/1e3cbddf461bd3da9b00e2f4f126c253
 object Records:
 
   object Record:
@@ -144,16 +143,7 @@ object Records:
     val hTeamTerm: FilterableChars[String] = filterableSchema(hTeam)
     val gTimeTerm: SortableNum[Long] = sortableSchema(gameTime)
 
-    /*
-    Map(
-      HomeTeam(games_ht(Str,Filterable)) -> yoctodb.samples.Records$$anon$5@75ccb827,
-      AwayTeam(games_at(Str,Filterable)) -> yoctodb.samples.Records$$anon$6@a06482,
-      Stage(games_stage(Str,Filterable)) -> yoctodb.samples.Records$$anon$7@73c5a129,
-      Winner(games_winner(Str,Filterable)) -> yoctodb.samples.Records$$anon$8@ed99d59
-    )
-     */
     println(filterableSchema)
-
     println(stageTerm.eq$(2))
 
   end main
