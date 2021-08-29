@@ -48,7 +48,7 @@ libraryDependencies ++= Seq(
   "com.typesafe" % "config" % "1.4.1",
   "ch.qos.logback" % "logback-classic" % "1.2.3",
   "com.yandex.yoctodb" % "yoctodb-core" % "0.0.19",
-  "dev.zio" %% "zio-prelude"  % "1.0.0-RC5",
+  "dev.zio" %% "zio-prelude"  % "1.0.0-RC6",
 
   "com.thesamet.scalapb" %% "scalapb-runtime" % scalapb.compiler.Version.scalapbVersion % "protobuf",
 
