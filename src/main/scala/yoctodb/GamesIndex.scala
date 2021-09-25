@@ -51,6 +51,13 @@ object GamesIndex:
   val Sortable = Column(gameTime) ++ Column(year) ++ Column(month) ++ Column(day)
 
   /*
+
+  type Union = Column[GameTime] | Column[Day] | Column[GameTime] // union types(sum, sealed trait), types
+  type Intersection = Column[GameTime] & Column[Day] & Column[GameTime] // intersection(product, case class) types,
+
+  summon[Union <:< Column[CEntry[?]]]
+  summon[Intersection <:< Column[CEntry[?]]]
+
   implicitly[Column[GameTime] with Column[Day] <:< Column[CEntry[?]]]
   implicitly[Column[GameTime] <:< Column[CEntry[?]]]
   implicitly[Column[GameTime] with Column[Day] <:< Column[CEntry[?]]]
