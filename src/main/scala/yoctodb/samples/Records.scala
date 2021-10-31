@@ -144,6 +144,7 @@ object Records:
     val gTimeTerm: SortableNum[Long] = sortableSchema(gameTime)
 
     println(filterableSchema)
+    println("**************")
     println(stageTerm.eq$(2))
 
   end main
