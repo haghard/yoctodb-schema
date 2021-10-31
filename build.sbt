@@ -10,7 +10,7 @@ lazy val scalac3Settings = Seq(
     "-unchecked",
     //"-Xfatal-warnings",
     //"-Yexplicit-nulls",
-    "-Wunused",
+    //"-Wunused",
     "-Ykind-projector",
     "-Ysafe-init", //guards against forward access reference
   ) ++ Seq("-rewrite", "-indent") ++ Seq("-source", "future")
