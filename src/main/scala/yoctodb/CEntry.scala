@@ -7,17 +7,17 @@ package yoctodb
 import com.yandex.yoctodb.query.Order
 import com.yandex.yoctodb.query.QueryBuilder.asc
 import com.yandex.yoctodb.query.QueryBuilder.desc
+import com.yandex.yoctodb.query.QueryBuilder.eq as equality
 import com.yandex.yoctodb.query.QueryBuilder.gt as greaterThan
 import com.yandex.yoctodb.query.QueryBuilder.gte as greaterOrEqThan
 import com.yandex.yoctodb.query.QueryBuilder.in as multiEquality
 import com.yandex.yoctodb.query.QueryBuilder.lt as lesserThan
 import com.yandex.yoctodb.query.QueryBuilder.lte as lesserOrEqThan
-import com.yandex.yoctodb.query.QueryBuilder.eq as equality
 import com.yandex.yoctodb.util.UnsignedByteArrays.from
 import com.yandex.yoctodb.v1.immutable.V1Database
 import yoctodb.schema.games.v1.GamesSchema
-import yoctodb.schema.games.v1.GamesSchema.*
 import yoctodb.schema.games.v1.GamesSchema.Pcolumn
+import yoctodb.schema.games.v1.GamesSchema.*
 
 sealed trait CEntry[A]:
 
@@ -109,7 +109,8 @@ object CEntry:
     }
 
   final case class GameWinner(
-      val protoColumn: Pcolumn = Pcolumn.Winner(games_winner(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable))
+      val protoColumn: Pcolumn =
+        Pcolumn.Winner(games_winner(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable))
     ) extends CEntry[String]:
     val term: FilterableChars[String] = new FilterableChars[String] {
       def eq$(team: String) = equality(columnName, from(team))

@@ -5,13 +5,13 @@
 package yoctodb
 
 import com.yandex.yoctodb.query.Order
-
 import com.yandex.yoctodb.util.UnsignedByteArrays.from
 import com.yandex.yoctodb.v1.immutable.V1Database
 import yoctodb.schema.games.v1.GamesSchema
-import yoctodb.schema.games.v1.GamesSchema.*
 import yoctodb.schema.games.v1.GamesSchema.Pcolumn
+import yoctodb.schema.games.v1.GamesSchema.*
 import zio.prelude.Validation
+
 import CEntry.*
 
 object GamesIndex:
@@ -51,6 +51,13 @@ object GamesIndex:
   val Sortable = Column(gameTime) ++ Column(year) ++ Column(month) ++ Column(day)
 
   /*
+
+  type Union = Column[GameTime] | Column[Day] | Column[GameTime] // union types(sum, sealed trait), types
+  type Intersection = Column[GameTime] & Column[Day] & Column[GameTime] // intersection(product, case class) types,
+
+  summon[Union <:< Column[CEntry[?]]]
+  summon[Intersection <:< Column[CEntry[?]]]
+
   implicitly[Column[GameTime] with Column[Day] <:< Column[CEntry[?]]]
   implicitly[Column[GameTime] <:< Column[CEntry[?]]]
   implicitly[Column[GameTime] with Column[Day] <:< Column[CEntry[?]]]
@@ -68,7 +75,8 @@ object GamesIndex:
   def checkSortedSegment(db: V1Database, columns: Set[String]): Boolean =
     columns.forall(column => db.getSorter(column).ne(null))
 
-  /** In order to declare this index as "safe to use" all fields from `columnsFromSchema` should be presented in `columnsFromIndex`
+  /** In order to declare this index as "safe to use" all fields from `columnsFromSchema` should be presented in
+    * `columnsFromIndex`
     */
   def checkIndexAgainstSchema(
       columnsFromIndex: Set[String],

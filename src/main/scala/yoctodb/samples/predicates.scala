@@ -1,4 +1,4 @@
-package yoctodb
+package yoctodb.samples
 
 object predicates:
 

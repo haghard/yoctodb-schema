@@ -9,6 +9,7 @@ import com.yandex.yoctodb.immutable.Database
 import com.yandex.yoctodb.query.QueryBuilder as yocto
 import com.yandex.yoctodb.util.buf.Buffer
 import com.yandex.yoctodb.v1.immutable.V1Database
+import org.slf4j.LoggerFactory
 import yoctodb.schema.games.v1.NbaResultPB
 import zio.prelude.*
 
@@ -18,11 +19,10 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import scala.util.Try
 
-import org.slf4j.LoggerFactory
-
 import GamesIndex.*
 import CEntry.*
 
+//comment it before test:compile
 @main def app(): Unit = Example()
 
 object Example:
@@ -73,8 +73,9 @@ object Example:
       },
     )
 
-  /** Why prefer zio.Validation over Either? Either short-circuits on failure. If validation errors exist, we just get the first one. You
-    * can go for Either[NonEmptyList[String], Unit] but it requires boilerplate
+  /** Why prefer zio.Validation over Either? Either short-circuits on failure. If validation errors occur, we just get
+    * the first one. For more information see: https://youtu.be/Hj4fRrlKHeY. You can go for Either[NonEmptyList[String],
+    * Unit] but it requires boilerplate.
     */
   def isValidSchema(yoctoDb: V1Database): Validation[String, Boolean] =
     Validation.validateWith(

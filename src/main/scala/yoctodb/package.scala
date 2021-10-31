@@ -17,5 +17,3 @@ package object yoctodb:
 
   object Stage extends SubtypeSmart[String](matchesRegex("(season|playoff)-[0-9]{2}-[0-9]{2}"))
   type Stage = Stage.Type
-
-//implicitly[String <:< CharSequence]

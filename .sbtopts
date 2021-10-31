@@ -1,5 +1,5 @@
--J-Xms500M
--J-Xmx600M
+-J-Xms450M
+-J-Xmx500M
 -J-Xss4M
 -J-XX:+UseG1GC
 -J-XX:+PrintCommandLineFlags
