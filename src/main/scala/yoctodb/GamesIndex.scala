@@ -50,24 +50,30 @@ object GamesIndex:
   // Precisely defined sortable schema of the GamesIndex
   val Sortable = Column(gameTime) ++ Column(year) ++ Column(month) ++ Column(day)
 
-  /*
+  // **************************************Proves**********************************************************************/
 
-  type Union = Column[GameTime] | Column[Day] | Column[GameTime]        // union types(sum types, modeled as sealed traits)
-  type Intersection = Column[GameTime] & Column[Day] & Column[GameTime] // intersection types (products, modeled as case classes)
+  type Union = Column[GameTime] | Column[Day] | Column[GameTime] // union types(sum types, modeled as sealed traits)
+  type Intersection =
+    Column[GameTime] & Column[Day] & Column[GameTime] // intersection types (products, modeled as case classes)
 
   summon[Union <:< Column[CEntry[?]]]
+  // Union type is a subtype of Column[CEntry[?]] or, differently expressed: an instance of Union can be considered as being an instance of Column[CEntry[?]].
+
   summon[Intersection <:< Column[CEntry[?]]]
 
   implicitly[Column[GameTime] with Column[Day] <:< Column[CEntry[?]]]
   implicitly[Column[GameTime] <:< Column[CEntry[?]]]
+
   implicitly[Column[GameTime] with Column[Day] <:< Column[CEntry[?]]]
+
+  implicitly[Column[GameTime] | Column[Day] <:< Column[CEntry[?]]]
+
   implicitly[Column[GameTime] with Column[Day] <:< Column[GameTime]]
   implicitly[Column[GameTime] with Column[Day] <:< Column[Day]]
   implicitly[Column[AwayTeam] <:< Column[?]]
   implicitly[Column[AwayTeam] with Column[Day] <:< Column[Day]]
-   */
 
-  // **************************************************************************************************************/
+  // ******************************************************************************************************************/
 
   def checkFilteredSegment(db: V1Database, columns: Set[String]): Boolean =
     columns.forall(column => db.getFilter(column).ne(null))
@@ -159,6 +165,9 @@ object GamesIndex:
         .flatten
         .mkString("\n")
 
+  // SubtypeSmart for stage that should match defined regexp
+  // See more there: thttps://youtu.be/M3HmROwOoRU?t=1357
   def stage(v: String): Validation[String, Stage] = Stage.make(v)
 
+  // SubtypeSmart for team name that should match defined regexp
   def team(v: String): Validation[String, Team] = Team.make(v)
