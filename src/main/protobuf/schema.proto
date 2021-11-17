@@ -58,7 +58,7 @@ message GamesSchema {
     //  IndexType indexType=2;
     //}
 
-    //all fields in the index
+    //Union(sum type) of all fields in the index
     oneof pcolumn {
       games_stage stage = 1;
       games_at awayTeam = 2;
