@@ -42,7 +42,7 @@ sealed trait CEntry[A]:
 
 object CEntry:
 
-  final case class FullStage(
+  final case class GameFullStage(
       val protoColumn: Pcolumn = Pcolumn.Stage(games_stage(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable))
     ) extends CEntry[String]:
     val term: FilterableChars[String] = new FilterableChars[String] {
@@ -50,7 +50,7 @@ object CEntry:
       def in$(stages: Set[String]) = multiEquality(columnName, stages.map(from(_)).toSeq*)
     }
 
-  final case class AwayTeam(
+  final case class GameAwayTeam(
       val protoColumn: Pcolumn = Pcolumn.AwayTeam(games_at(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable))
     ) extends CEntry[String]:
     val term: FilterableChars[String] = new FilterableChars[String] {
@@ -58,7 +58,7 @@ object CEntry:
       def in$(teams: Set[String]) = multiEquality(columnName, teams.map(from(_)).toSeq*)
     }
 
-  final case class HomeTeam(
+  final case class GameHomeTeam(
       val protoColumn: Pcolumn = Pcolumn.HomeTeam(games_ht(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable))
     ) extends CEntry[String]:
     val term: FilterableChars[String] = new FilterableChars[String] {
@@ -66,7 +66,7 @@ object CEntry:
       def in$(teams: Set[String]) = multiEquality(columnName, teams.map(from(_)).toSeq*)
     }
 
-  final case class Year(
+  final case class GameYear(
       val protoColumn: Pcolumn = Pcolumn.Year(games_yy(GamesSchema.FieldType.Integer, GamesSchema.IndexType.Both))
     ) extends CEntry[Int]:
     val term: BothNums[Int] = new BothNums[Int] {
@@ -80,7 +80,7 @@ object CEntry:
       val ascOrd: Order = asc(columnName)
     }
 
-  final case class Month(
+  final case class GameMonth(
       val protoColumn: Pcolumn = Pcolumn.Month(games_mm(GamesSchema.FieldType.Integer, GamesSchema.IndexType.Both))
     ) extends CEntry[Int]:
     val term: BothNums[Int] = new BothNums[Int] {
@@ -94,7 +94,7 @@ object CEntry:
       val ascOrd: Order = asc(columnName)
     }
 
-  final case class Day(
+  final case class GameDay(
       val protoColumn: Pcolumn = Pcolumn.Day(games_dd(GamesSchema.FieldType.Integer, GamesSchema.IndexType.Both))
     ) extends CEntry[Int]:
     val term: BothNums[Int] = new BothNums[Int] {

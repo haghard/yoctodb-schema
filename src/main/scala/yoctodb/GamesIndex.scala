@@ -21,12 +21,12 @@ object GamesIndex:
   val InfoColumnName = "g_info"
 
   // Columns
-  val fullStage = FullStage()
-  val awayTeam = AwayTeam()
-  val homeTeam = HomeTeam()
-  val year = Year()
-  val month = Month()
-  val day = Day()
+  val fullStage = GameFullStage()
+  val awayTeam = GameAwayTeam()
+  val homeTeam = GameHomeTeam()
+  val year = GameYear()
+  val month = GameMonth()
+  val day = GameDay()
   val gameTime = GameTime()
   val winner = GameWinner()
   // val fake     = new Fake()
@@ -43,35 +43,44 @@ object GamesIndex:
       gameTime.protoColumn,
     )
 
-  // Precisely defined filterable schema of the GamesIndex as a value
-  val Filterable = Column(fullStage) ++ Column(awayTeam) ++ Column(homeTeam) ++ Column(winner) ++ Column(year)
-    ++ Column(month) ++ Column(day) // ++ Fake(fake)
+  type FilterableSegment =
+    Column[GameHomeTeam & GameWinner & GameYear & (GameFullStage & GameAwayTeam & (GameMonth & GameDay))]
+
+  // Precisely defined filterable schema of the GamesIndex as a value (intersection|products)
+  val Filterable /*: FilterableSegment*/ =
+    Column(fullStage) ++ Column(awayTeam) ++ Column(homeTeam) ++ Column(winner) ++ Column(year) ++ Column(
+      month
+    ) ++ Column(day) // ++ Fake(fake)
+
+  type SortableSegment =
+    Column[GameTime & GameYear & (GameMonth & GameDay)]
 
   // Precisely defined sortable schema of the GamesIndex
-  val Sortable = Column(gameTime) ++ Column(year) ++ Column(month) ++ Column(day)
+  val Sortable /*: SortableSegment*/ =
+    Column(gameTime) ++ Column(year) ++ Column(month) ++ Column(day)
 
   // **************************************Proves**********************************************************************/
 
-  type Union = Column[GameTime] | Column[Day] | Column[GameTime] // union types(sum types, modeled as sealed traits)
+  type Union = Column[GameTime] | Column[GameDay] | Column[GameTime] // union types(sum types, modeled as sealed traits)
   type Intersection =
-    Column[GameTime] & Column[Day] & Column[GameTime] // intersection types (products, modeled as case classes)
+    Column[GameTime] & Column[GameDay] & Column[GameTime] // intersection types (products, modeled as case classes)
 
   summon[Union <:< Column[CEntry[?]]]
   // Union type is a subtype of Column[CEntry[?]] or, differently expressed: an instance of Union can be considered as being an instance of Column[CEntry[?]].
 
   summon[Intersection <:< Column[CEntry[?]]]
 
-  implicitly[Column[GameTime] with Column[Day] <:< Column[CEntry[?]]]
+  implicitly[Column[GameTime] with Column[GameDay] <:< Column[CEntry[?]]]
   implicitly[Column[GameTime] <:< Column[CEntry[?]]]
 
-  implicitly[Column[GameTime] with Column[Day] <:< Column[CEntry[?]]]
+  implicitly[Column[GameTime] with Column[GameDay] <:< Column[CEntry[?]]]
 
-  implicitly[Column[GameTime] | Column[Day] <:< Column[CEntry[?]]]
+  implicitly[Column[GameTime] | Column[GameDay] <:< Column[CEntry[?]]]
 
-  implicitly[Column[GameTime] with Column[Day] <:< Column[GameTime]]
-  implicitly[Column[GameTime] with Column[Day] <:< Column[Day]]
-  implicitly[Column[AwayTeam] <:< Column[?]]
-  implicitly[Column[AwayTeam] with Column[Day] <:< Column[Day]]
+  implicitly[Column[GameTime] with Column[GameDay] <:< Column[GameTime]]
+  implicitly[Column[GameTime] with Column[GameDay] <:< Column[GameDay]]
+  implicitly[Column[GameAwayTeam] <:< Column[?]]
+  implicitly[Column[GameAwayTeam] with Column[GameDay] <:< Column[GameDay]]
 
   // ******************************************************************************************************************/
 

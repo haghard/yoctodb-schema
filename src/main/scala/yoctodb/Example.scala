@@ -79,12 +79,12 @@ object Example:
     */
   def isValidSchema(yoctoDb: V1Database): Validation[String, Boolean] =
     Validation.validateWith(
-      Validation.fromPredicateWith("Filterable schema mismatch !")(
+      Validation.fromPredicateWith("Filterable schema region mismatch !")(
         checkFilteredSegment(yoctoDb, Filterable.columns)
       )(
         identity
       ),
-      Validation.fromPredicateWith("Sortable schema mismatch !")(
+      Validation.fromPredicateWith("Sortable schema region mismatch !")(
         checkSortedSegment(yoctoDb, Sortable.columns)
       )(
         identity
@@ -124,9 +124,9 @@ object Example:
           GamesIndex
             .Filterable
             .where { s =>
-              val stage = s.column[FullStage].term
-              val homeTeam = s.column[HomeTeam].term
-              val awayTeam = s.column[AwayTeam].term
+              val stage = s.column[GameFullStage].term
+              val homeTeam = s.column[GameHomeTeam].term
+              val awayTeam = s.column[GameAwayTeam].term
               val winner = s.column[GameWinner].term
 
               yocto

@@ -13,7 +13,7 @@ project/plugins/project/
 
 .idea
 .bsp
-
+.bloop
 
 sbt-launch.jar
 sbt

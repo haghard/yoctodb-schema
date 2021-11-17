@@ -22,10 +22,16 @@ final case class Column[+A <: CEntry[?]] private (
 
   override def toString: String = s"Schema(${columns.mkString(",")})"
 
+//override def toString: String = s"Schema(${underlying.mkString(",")}, ${columns.mkString(",")})"
+
+//override def hashCode(): Int = self.columns.hashCode()
+/*
+  // (Column(fullStage) ++ Column(awayTeam)).equals(Column(fullStage) ++ Column(awayTeam))
   override def equals(obj: Any): Boolean =
     obj.asInstanceOf[scala.Matchable] match
-      case that: Column[CEntry[?]] => self.columns.equals(that.columns)
+      case that: Column[CEntry[?]] => self.columns == that.columns
       case _                       => false
+ */
 
 /** For more information on idea behind this implementation see:
   *
