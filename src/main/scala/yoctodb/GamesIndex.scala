@@ -29,7 +29,7 @@ object GamesIndex:
   val day = Day()
   val gameTime = GameTime()
   val winner = GameWinner()
-  //val fake     = new Fake()
+  // val fake     = new Fake()
 
   val IndexColumns: Set[GamesSchema.Pcolumn] =
     Set(
@@ -43,17 +43,17 @@ object GamesIndex:
       gameTime.protoColumn,
     )
 
-  //Precisely defined filterable schema as a value
+  // Precisely defined filterable schema of the GamesIndex as a value
   val Filterable = Column(fullStage) ++ Column(awayTeam) ++ Column(homeTeam) ++ Column(winner) ++ Column(year)
-    ++ Column(month) ++ Column(day) //++ Fake(fake)
+    ++ Column(month) ++ Column(day) // ++ Fake(fake)
 
-  //Sortable schema as a value
+  // Precisely defined sortable schema of the GamesIndex
   val Sortable = Column(gameTime) ++ Column(year) ++ Column(month) ++ Column(day)
 
   /*
 
-  type Union = Column[GameTime] | Column[Day] | Column[GameTime] // union types(sum, sealed trait), types
-  type Intersection = Column[GameTime] & Column[Day] & Column[GameTime] // intersection(product, case class) types,
+  type Union = Column[GameTime] | Column[Day] | Column[GameTime]        // union types(sum types, modeled as sealed traits)
+  type Intersection = Column[GameTime] & Column[Day] & Column[GameTime] // intersection types (products, modeled as case classes)
 
   summon[Union <:< Column[CEntry[?]]]
   summon[Intersection <:< Column[CEntry[?]]]
@@ -67,7 +67,7 @@ object GamesIndex:
   implicitly[Column[AwayTeam] with Column[Day] <:< Column[Day]]
    */
 
-  //**************************************************************************************************************/
+  // **************************************************************************************************************/
 
   def checkFilteredSegment(db: V1Database, columns: Set[String]): Boolean =
     columns.forall(column => db.getFilter(column).ne(null))
@@ -117,7 +117,7 @@ object GamesIndex:
                 case Pcolumn.Month(v)    => v.companion.scalaDescriptor.name == name
                 case Pcolumn.Day(v)      => v.companion.scalaDescriptor.name == name
                 case Pcolumn.Empty       => false
-            //case Index.Fake(v)     ⇒ v.companion.scalaDescriptor.name == name
+            // case Index.Fake(v)     ⇒ v.companion.scalaDescriptor.name == name
             }
             .map {
               case Pcolumn.Stage(v) =>
@@ -153,7 +153,7 @@ object GamesIndex:
                   v.indexType
                 ) + "]"
               case Pcolumn.Empty => ""
-              //case Index.Fake(v) ⇒ "[" + v.companion.scalaDescriptor.name + ":" + fieldType(v.`type`) + ":" + indType(v.indexType) + "]"
+              // case Index.Fake(v) ⇒ "[" + v.companion.scalaDescriptor.name + ":" + fieldType(v.`type`) + ":" + indType(v.indexType) + "]"
             }
         }
         .flatten

@@ -30,8 +30,8 @@ object Example:
   val logger = LoggerFactory.getLogger("app")
 
   val tzFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss Z")
-  val EasternTime = java.time.ZoneId.of("America/New_York") //UTC-4
-  //val MoscowTime = java.time.ZoneId.of("Europe/Moscow") //UTC+3.
+  val EasternTime = java.time.ZoneId.of("America/New_York") // UTC-4
+  // val MoscowTime = java.time.ZoneId.of("Europe/Moscow") //UTC+3.
 
   def loadIndex(): Validation[String, V1Database] =
     Validation
@@ -55,9 +55,9 @@ object Example:
     yoctoDb.execute(
       yoctoQuery,
       (docId: Int, _: Database) => {
-        //val payload: com.yandex.yoctodb.util.buf.Buffer = yoctoDb.getFieldValue(docId, InfoColumnName)
-        //val result                                      = new String(payload.toByteArray)
-        //logger.debug(result)
+        // val payload: com.yandex.yoctodb.util.buf.Buffer = yoctoDb.getFieldValue(docId, InfoColumnName)
+        // val result                                      = new String(payload.toByteArray)
+        // logger.debug(result)
 
         val payload: Buffer = yoctoDb.getFieldValue(docId, PayloadColumnName)
         val result =
@@ -117,9 +117,9 @@ object Example:
 
         val yoctoQuery = GamesIndex.Sortable.orderBy { s =>
           val gameTime = s.column[GameTime].term
-          //val yyyy = s.column[Year].term
-          //val month = s.column[Month].term
-          //val day = s.column[Day].term
+          // val yyyy = s.column[Year].term
+          // val month = s.column[Month].term
+          // val day = s.column[Day].term
 
           GamesIndex
             .Filterable
@@ -140,9 +140,9 @@ object Example:
             }
             .orderBy(gameTime.descOrd)
             .limit(10)
-        //.orderBy(yyyy.descOrd)
-        //.and(month.descOrd)
-        //.and(day.descOrd)
+        // .orderBy(yyyy.descOrd)
+        // .and(month.descOrd)
+        // .and(day.descOrd)
         }
 
         exec(yoctoDb, yoctoQuery)

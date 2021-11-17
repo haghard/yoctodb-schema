@@ -2,7 +2,7 @@ package yoctodb.samples
 
 object predicates:
 
-  //Declaration side variance: inputs (-) output (+)
+  // Declaration side variance: inputs (-) output (+)
   final case class Predicate[-A](apply: A => Boolean):
     self =>
 
@@ -17,13 +17,13 @@ object predicates:
   def isGreaterThan[T](n: T)(using N: scala.Numeric[T]): Predicate[T] =
     Predicate(N.gt(_, n))
 
-  //def isGreaterThan[T](n: T)(using Ord: scala.Ordering[T]): Predicate[T] = Predicate(Ord.gt(_, n))
+  // def isGreaterThan[T](n: T)(using Ord: scala.Ordering[T]): Predicate[T] = Predicate(Ord.gt(_, n))
 
   def isGreaterOrEqualTo[T](n: T)(using N: scala.Numeric[T]): Predicate[T] =
     isGreaterThan(n) || isEqualTo(n)
 
-  //def isLessThan(n: Int): Predicate[Int] = Predicate(_ < n)
-  //def isLessThanOrEqualTo(n: Int): Predicate[Int] = isLessThan(n) || isEqualTo(n)
+  // def isLessThan(n: Int): Predicate[Int] = Predicate(_ < n)
+  // def isLessThanOrEqualTo(n: Int): Predicate[Int] = isLessThan(n) || isEqualTo(n)
 
   def isEqualTo[T](n: T) = Predicate(_ == n)
 

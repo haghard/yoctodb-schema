@@ -22,9 +22,10 @@ final case class Column[+A <: CEntry[?]] private (
 
   override def toString: String = s"Schema(${columns.mkString(",")})"
 
-  override def equals(obj: Any): Boolean = obj match
-    case that: Column[CEntry[?]] => self.columns.equals(that.columns)
-    case _                       => false
+  override def equals(obj: Any): Boolean =
+    obj.asInstanceOf[scala.Matchable] match
+      case that: Column[CEntry[?]] => self.columns.equals(that.columns)
+      case _                       => false
 
 /** For more information on idea behind this implementation see:
   *
@@ -63,7 +64,7 @@ object Column:
       schema.underlying(tag).asInstanceOf[T]
 
     def where(
-        buildQuery: Schema => com.yandex.yoctodb.query.Where //Query
+        buildQuery: Schema => com.yandex.yoctodb.query.Where // Query
       ): com.yandex.yoctodb.query.Where = buildQuery(schema)
 
     def orderBy(
