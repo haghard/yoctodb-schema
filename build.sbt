@@ -46,7 +46,7 @@ unmanagedBase := baseDirectory.value / "lib"
 libraryDependencies ++= Seq(
   //"dev.zio" %% "izumi-reflect" % "1.1.2",
   "com.typesafe" % "config" % "1.4.1",
-  "ch.qos.logback" % "logback-classic" % "1.2.6",
+  "ch.qos.logback" % "logback-classic" % "1.2.7",
   "com.yandex.yoctodb" % "yoctodb-core" % "0.0.19",
   "dev.zio" %% "zio-prelude"  % "1.0.0-RC6",
 
