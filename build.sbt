@@ -45,10 +45,10 @@ unmanagedBase := baseDirectory.value / "lib"
 
 libraryDependencies ++= Seq(
   //"dev.zio" %% "izumi-reflect" % "1.1.2",
-  "com.typesafe" % "config" % "1.4.1",
-  "ch.qos.logback" % "logback-classic" % "1.2.7",
-  "com.yandex.yoctodb" % "yoctodb-core" % "0.0.19",
-  "dev.zio" %% "zio-prelude"  % "1.0.0-RC6",
+  "com.typesafe"       %  "config"          % "1.4.1",
+  "ch.qos.logback"     %  "logback-classic" % "1.2.7",
+  "com.yandex.yoctodb" %  "yoctodb-core"    % "0.0.19",
+  "dev.zio"            %% "zio-prelude"     % "1.0.0-RC6",
 
   "com.thesamet.scalapb" %% "scalapb-runtime" % scalapb.compiler.Version.scalapbVersion % "protobuf",
 
@@ -69,7 +69,6 @@ Test / sourceGenerators += Def.task {
 }.taskValue
 
 Compile / PB.targets := Seq(scalapb.gen() -> (Compile / sourceManaged).value)
-
 
 ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.5.0"
 

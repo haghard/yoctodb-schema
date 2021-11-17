@@ -42,8 +42,8 @@ object Example:
           if (indexFile.exists && indexFile.isFile) {
             val reader = DatabaseFormat.getCurrent.getDatabaseReader
             val db = reader.from(Buffer.mmap(indexFile, false))
-            logger.warn("* * * Index size: {} MB  * * *", indexFile.length() / (1024 * 1024))
-            logger.warn("* * * Docs number: {} * * *", db.getDocumentCount)
+            logger.warn("★ ★ ★ Index size: {} MB  ★ ★ ★", indexFile.length() / (1024 * 1024))
+            logger.warn("★ ★ ★ Docs number: {} ★ ★ ★", db.getDocumentCount)
             db.asInstanceOf[V1Database]
           }
           else throw new Exception(s"Couldn't find or open file $indexPath")
@@ -104,14 +104,14 @@ object Example:
       }
       .flatMap {
         case (yoctoDb, ses18_19, ses19_20, lal, gsw) =>
-          logger.warn("Index schema layout")
+          logger.warn("★ ★ ★ Index schema layout ★ ★ ★")
           logger.info(showSchema(Filterable.columns ++ Sortable.columns))
           isValidSchema(yoctoDb).map(_ => (yoctoDb, ses18_19, ses19_20, lal, gsw))
       } match
       case ZValidation.Failure(_, errors) =>
         logger.error(errors.toChunk.mkString(","))
       case ZValidation.Success(_, params) =>
-        logger.warn("Index schema validated")
+        logger.warn("★ ★ ★ Index schema validated successfully ★ ★ ★")
 
         val (yoctoDb, ses18_19, ses19_20, lal, gsw) = params
 
