@@ -47,7 +47,11 @@ object Column:
 
   extension [Schema <: Column[?]](schema: Schema)
 
-    inline def ++[B <: CEntry[?]](that: Column[B]): Schema & Column[B] =
+    inline def ++[B <: CEntry[?]](
+        that: Column[B]
+      )(using
+        scala.util.NotGiven[Schema =:= Column[B]]
+      ): Schema & Column[B] =
       union(that)
 
     infix def union[B <: CEntry[?]](that: Column[B]): Schema & Column[B] =

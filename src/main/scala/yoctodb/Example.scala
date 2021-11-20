@@ -80,12 +80,12 @@ object Example:
   def isValidSchema(yoctoDb: V1Database): Validation[String, Boolean] =
     Validation.validateWith(
       Validation.fromPredicateWith("Filterable schema region mismatch !")(
-        checkFilteredSegment(yoctoDb, Filterable.columns)
+        checkFilteredSegment(yoctoDb, FilterableSegment.columns)
       )(
         identity
       ),
       Validation.fromPredicateWith("Sortable schema region mismatch !")(
-        checkSortedSegment(yoctoDb, Sortable.columns)
+        checkSortedSegment(yoctoDb, SortableSegment.columns)
       )(
         identity
       ),
@@ -105,7 +105,7 @@ object Example:
       .flatMap {
         case (yoctoDb, ses18_19, ses19_20, lal, gsw) =>
           logger.warn("★ ★ ★ Index schema layout ★ ★ ★")
-          logger.info(showSchema(Filterable.columns ++ Sortable.columns))
+          logger.info(showSchema(FilterableSegment.columns ++ SortableSegment.columns))
           isValidSchema(yoctoDb).map(_ => (yoctoDb, ses18_19, ses19_20, lal, gsw))
       } match
       case ZValidation.Failure(_, errors) =>
@@ -115,14 +115,14 @@ object Example:
 
         val (yoctoDb, ses18_19, ses19_20, lal, gsw) = params
 
-        val yoctoQuery = GamesIndex.Sortable.orderBy { s =>
+        val yoctoQuery = GamesIndex.SortableSegment.orderBy { s =>
           val gameTime = s.column[GameTime].term
           // val yyyy = s.column[Year].term
           // val month = s.column[Month].term
           // val day = s.column[Day].term
 
           GamesIndex
-            .Filterable
+            .FilterableSegment
             .where { s =>
               val stage = s.column[GameFullStage].term
               val homeTeam = s.column[GameHomeTeam].term

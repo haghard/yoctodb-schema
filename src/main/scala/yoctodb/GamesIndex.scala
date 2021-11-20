@@ -43,20 +43,19 @@ object GamesIndex:
       gameTime.protoColumn,
     )
 
-  type FilterableSegment =
+  type Filterable =
     Column[GameHomeTeam & GameWinner & GameYear & (GameFullStage & GameAwayTeam & (GameMonth & GameDay))]
 
   // Precisely defined filterable schema of the GamesIndex as a value (intersection|products)
-  val Filterable /*: FilterableSegment*/ =
+  val FilterableSegment /*: Filterable*/ =
     Column(fullStage) ++ Column(awayTeam) ++ Column(homeTeam) ++ Column(winner) ++ Column(year) ++ Column(
       month
     ) ++ Column(day) // ++ Fake(fake)
 
-  type SortableSegment =
-    Column[GameTime & GameYear & (GameMonth & GameDay)]
+  type Sortable = Column[GameTime & GameYear & (GameMonth & GameDay)]
 
   // Precisely defined sortable schema of the GamesIndex
-  val Sortable /*: SortableSegment*/ =
+  val SortableSegment /*: Sortable*/ =
     Column(gameTime) ++ Column(year) ++ Column(month) ++ Column(day)
 
   // **************************************Proves**********************************************************************/
