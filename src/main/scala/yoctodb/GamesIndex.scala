@@ -60,7 +60,9 @@ object GamesIndex:
 
   // **************************************Proves**********************************************************************/
 
-  type Union = Column[GameTime] | Column[GameDay] | Column[GameTime] // union types(sum types, modeled as sealed traits)
+  type Union =
+    Column[GameTime] | Column[GameYear] | Column[GameMonth] |
+      Column[GameDay] // union types(sum types, modeled as sealed traits)
   type Intersection =
     Column[GameTime] & Column[GameDay] & Column[GameTime] // intersection types (products, modeled as case classes)
 
@@ -102,19 +104,19 @@ object GamesIndex:
     ): String =
     def indType(indexType: GamesSchema.IndexType) =
       indexType match
-        case IndexType.Filterable      => "Filterable"
-        case IndexType.Sortable        => "Sortable"
-        case IndexType.Both            => "Both"
-        case IndexType.Unrecognized(_) => "Unrecognized"
+        case IndexType.Filterable      => IndexType.Filterable.name
+        case IndexType.Sortable        => IndexType.Sortable.name
+        case IndexType.Both            => IndexType.Both.name
+        case IndexType.Unrecognized(_) => IndexType.Unrecognized(-1).name
 
     def fieldType(fieldType: GamesSchema.FieldType): String =
       fieldType match
-        case FieldType.Str             => "Str"
-        case FieldType.Integer         => "Int"
-        case FieldType.Dbl             => "Double"
-        case FieldType.Lng             => "Long"
-        case FieldType.Bytes           => "Bts"
-        case FieldType.Unrecognized(_) => "Unrecognized"
+        case FieldType.Str             => FieldType.Str.name
+        case FieldType.Integer         => FieldType.Integer.name
+        case FieldType.Dbl             => FieldType.Dbl.name
+        case FieldType.Lng             => FieldType.Lng.name
+        case FieldType.Bytes           => FieldType.Bytes.name
+        case FieldType.Unrecognized(_) => FieldType.Unrecognized(-1).name
 
     "\n" +
       columnsFromIndex
