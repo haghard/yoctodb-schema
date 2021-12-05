@@ -55,88 +55,90 @@ object Records:
       case Pcolumn.Month(v)    => v.companion.scalaDescriptor.name
       case Pcolumn.Day(v)      => v.companion.scalaDescriptor.name
       case Pcolumn.Empty       => yoctodb.EmptyColumn
+  end getName
+
+  val stage = Pcolumn.Stage(games_stage(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable))
+  val aTeam = Pcolumn.AwayTeam(games_at(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable))
+  val hTeam = Pcolumn.HomeTeam(games_ht(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable))
+  val gameTime = Pcolumn.Time(games_ts(GamesSchema.FieldType.Lng, GamesSchema.IndexType.Sortable))
+  val winner = Pcolumn.Winner(games_winner(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable))
+  val year = Pcolumn.Year(games_yy(GamesSchema.FieldType.Integer, GamesSchema.IndexType.Both))
+  val month = Pcolumn.Month(games_mm(GamesSchema.FieldType.Integer, GamesSchema.IndexType.Both))
+  val day = Pcolumn.Day(games_dd(GamesSchema.FieldType.Integer, GamesSchema.IndexType.Both))
+
+  import Record.*
+
+  val sortableSchema =
+    Rec.zero + (gameTime -> new SortableNum[Long] {
+      val columnName = getName(gameTime)
+      val descOrd = desc(columnName)
+      val ascOrd = asc(columnName)
+    }) +
+      (year -> new BothNums[Int] {
+        val columnName = getName(year)
+        def gt$(yy: Int) = greaterThan(columnName, from(yy))
+        def gte$(yy: Int) = greaterOrEqThan(columnName, from(yy))
+        def lt$(yy: Int) = lesserThan(columnName, from(yy))
+        def lte$(yy: Int) = lesserOrEqThan(columnName, from(yy))
+        def eq$(yy: Int) = equality(columnName, from(yy))
+        def in$(years: Set[Int]) = multiEquality(columnName, years.map(from(_)).toSeq*)
+        val descOrd: Order = desc(columnName)
+        val ascOrd: Order = asc(columnName)
+      }) +
+      (month -> new BothNums[Int] {
+        val columnName = getName(month)
+        def gt$(month: Int) = greaterThan(columnName, from(month))
+        def gte$(month: Int) = greaterOrEqThan(columnName, from(month))
+        def lt$(month: Int) = lesserThan(columnName, from(month))
+        def lte$(month: Int) = lesserOrEqThan(columnName, from(month))
+        def eq$(month: Int) = equality(columnName, from(month))
+        def in$(months: Set[Int]) = multiEquality(columnName, months.map(from(_)).toSeq*)
+        val descOrd: Order = desc(columnName)
+        val ascOrd: Order = asc(columnName)
+      }) +
+      (day -> new BothNums[Int] {
+        val columnName = getName(day)
+        def gt$(month: Int) = greaterThan(columnName, from(month))
+        def gte$(month: Int) = greaterOrEqThan(columnName, from(month))
+        def lt$(month: Int) = lesserThan(columnName, from(month))
+        def lte$(month: Int) = lesserOrEqThan(columnName, from(month))
+        def eq$(month: Int) = equality(columnName, from(month))
+        def in$(months: Set[Int]) = multiEquality(columnName, months.map(from(_)).toSeq*)
+        val descOrd: Order = desc(columnName)
+        val ascOrd: Order = asc(columnName)
+      })
+
+  /*: Rec[(aTeam.type, FilterableChars[String]) *: (stage.type, BothNums[Int]) *: (time.type, SortableNum[Long]) *: EmptyTuple]*/
+  val filterableSchema =
+    Rec.zero +
+      (hTeam -> new FilterableChars[String] {
+        val columnName = getName(hTeam)
+        def eq$(stageName: String) = equality(columnName, from(stageName))
+        def in$(stages: Set[String]) = multiEquality(columnName, stages.map(from(_)).toSeq*)
+      }) +
+      (aTeam -> new FilterableChars[String] {
+        val columnName = getName(aTeam)
+        def eq$(stageName: String) = equality(columnName, from(stageName))
+        def in$(stages: Set[String]) = multiEquality(columnName, stages.map(from(_)).toSeq*)
+      }) +
+      (stage -> new BothNums[Int] {
+        val columnName = getName(stage)
+        def gt$(yy: Int) = greaterThan(columnName, from(yy))
+        def gte$(yy: Int) = greaterOrEqThan(columnName, from(yy))
+        def lt$(yy: Int) = lesserThan(columnName, from(yy))
+        def lte$(yy: Int) = lesserOrEqThan(columnName, from(yy))
+        def eq$(yy: Int) = equality(columnName, from(yy))
+        def in$(years: Set[Int]) = multiEquality(columnName, years.map(from(_)).toSeq*)
+        val descOrd: Order = desc(columnName)
+        val ascOrd: Order = asc(columnName)
+      }) +
+      (winner -> new FilterableChars[String] {
+        val columnName = getName(winner)
+        def eq$(team: String) = equality(columnName, from(team))
+        def in$(teams: Set[String]) = multiEquality(columnName, teams.map(from(_)).toSeq*)
+      })
 
   def main(args: Array[String]) =
-    import Record.*
-
-    val stage = Pcolumn.Stage(games_stage(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable))
-    val aTeam = Pcolumn.AwayTeam(games_at(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable))
-    val hTeam = Pcolumn.HomeTeam(games_ht(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable))
-    val gameTime = Pcolumn.Time(games_ts(GamesSchema.FieldType.Lng, GamesSchema.IndexType.Sortable))
-    val winner = Pcolumn.Winner(games_winner(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable))
-    val year = Pcolumn.Year(games_yy(GamesSchema.FieldType.Integer, GamesSchema.IndexType.Both))
-    val month = Pcolumn.Month(games_mm(GamesSchema.FieldType.Integer, GamesSchema.IndexType.Both))
-    val day = Pcolumn.Day(games_dd(GamesSchema.FieldType.Integer, GamesSchema.IndexType.Both))
-
-    val sortableSchema =
-      Rec.zero + (gameTime -> new SortableNum[Long] {
-        val columnName = getName(gameTime)
-        val descOrd = desc(columnName)
-        val ascOrd = asc(columnName)
-      }) +
-        (year -> new BothNums[Int] {
-          val columnName = getName(year)
-          def gt$(yy: Int) = greaterThan(columnName, from(yy))
-          def gte$(yy: Int) = greaterOrEqThan(columnName, from(yy))
-          def lt$(yy: Int) = lesserThan(columnName, from(yy))
-          def lte$(yy: Int) = lesserOrEqThan(columnName, from(yy))
-          def eq$(yy: Int) = equality(columnName, from(yy))
-          def in$(years: Set[Int]) = multiEquality(columnName, years.map(from(_)).toSeq*)
-          val descOrd: Order = desc(columnName)
-          val ascOrd: Order = asc(columnName)
-        }) +
-        (month -> new BothNums[Int] {
-          val columnName = getName(month)
-          def gt$(month: Int) = greaterThan(columnName, from(month))
-          def gte$(month: Int) = greaterOrEqThan(columnName, from(month))
-          def lt$(month: Int) = lesserThan(columnName, from(month))
-          def lte$(month: Int) = lesserOrEqThan(columnName, from(month))
-          def eq$(month: Int) = equality(columnName, from(month))
-          def in$(months: Set[Int]) = multiEquality(columnName, months.map(from(_)).toSeq*)
-          val descOrd: Order = desc(columnName)
-          val ascOrd: Order = asc(columnName)
-        }) +
-        (day -> new BothNums[Int] {
-          val columnName = getName(day)
-          def gt$(month: Int) = greaterThan(columnName, from(month))
-          def gte$(month: Int) = greaterOrEqThan(columnName, from(month))
-          def lt$(month: Int) = lesserThan(columnName, from(month))
-          def lte$(month: Int) = lesserOrEqThan(columnName, from(month))
-          def eq$(month: Int) = equality(columnName, from(month))
-          def in$(months: Set[Int]) = multiEquality(columnName, months.map(from(_)).toSeq*)
-          val descOrd: Order = desc(columnName)
-          val ascOrd: Order = asc(columnName)
-        })
-
-    /*: Rec[(aTeam.type, FilterableChars[String]) *: (stage.type, BothNums[Int]) *: (time.type, SortableNum[Long]) *: EmptyTuple]*/
-    val filterableSchema =
-      Rec.zero +
-        (hTeam -> new FilterableChars[String] {
-          val columnName = getName(hTeam)
-          def eq$(stageName: String) = equality(columnName, from(stageName))
-          def in$(stages: Set[String]) = multiEquality(columnName, stages.map(from(_)).toSeq*)
-        }) +
-        (aTeam -> new FilterableChars[String] {
-          val columnName = getName(aTeam)
-          def eq$(stageName: String) = equality(columnName, from(stageName))
-          def in$(stages: Set[String]) = multiEquality(columnName, stages.map(from(_)).toSeq*)
-        }) +
-        (stage -> new BothNums[Int] {
-          val columnName = getName(stage)
-          def gt$(yy: Int) = greaterThan(columnName, from(yy))
-          def gte$(yy: Int) = greaterOrEqThan(columnName, from(yy))
-          def lt$(yy: Int) = lesserThan(columnName, from(yy))
-          def lte$(yy: Int) = lesserOrEqThan(columnName, from(yy))
-          def eq$(yy: Int) = equality(columnName, from(yy))
-          def in$(years: Set[Int]) = multiEquality(columnName, years.map(from(_)).toSeq*)
-          val descOrd: Order = desc(columnName)
-          val ascOrd: Order = asc(columnName)
-        }) +
-        (winner -> new FilterableChars[String] {
-          val columnName = getName(winner)
-          def eq$(team: String) = equality(columnName, from(team))
-          def in$(teams: Set[String]) = multiEquality(columnName, teams.map(from(_)).toSeq*)
-        })
 
     val stageTerm: BothNums[Int] = filterableSchema(stage)
     val aTeamTerm: FilterableChars[String] = filterableSchema(aTeam)

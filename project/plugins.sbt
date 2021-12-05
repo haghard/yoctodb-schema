@@ -6,4 +6,4 @@ addSbtPlugin("com.thesamet"       %   "sbt-protoc"      % "1.0.4")
 addSbtPlugin("com.timushev.sbt"   %   "sbt-rewarn"      % "0.1.3")
 addSbtPlugin("ch.epfl.scala"      %   "sbt-scalafix"    % "0.9.30")
 
-libraryDependencies += "com.thesamet.scalapb" %% "compilerplugin" % "0.11.4"
+libraryDependencies += "com.thesamet.scalapb" %% "compilerplugin" % "0.11.6"

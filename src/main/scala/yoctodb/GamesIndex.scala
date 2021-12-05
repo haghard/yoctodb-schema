@@ -175,8 +175,8 @@ object GamesIndex:
         .flatten
         .mkString("\n")
 
-  // SubtypeSmart for stage that should match defined regexp
-  // See more there: thttps://youtu.be/M3HmROwOoRU?t=1357
+  // Subtype for stage that should match defined regexp
+  // See more there: https://youtu.be/M3HmROwOoRU?t=1357
   def stage(v: String): Validation[String, Stage] = Stage.make(v)
 
   // SubtypeSmart for team name that should match defined regexp
