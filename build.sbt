@@ -46,14 +46,18 @@ unmanagedBase := baseDirectory.value / "lib"
 libraryDependencies ++= Seq(
   //"dev.zio" %% "izumi-reflect" % "1.1.2",
   "com.typesafe"       %  "config"          % "1.4.1",
-  "ch.qos.logback"     %  "logback-classic" % "1.2.7",
-  "com.yandex.yoctodb" %  "yoctodb-core"    % "0.0.19",
+  "ch.qos.logback"     %  "logback-classic" % "1.2.10",
+  "com.yandex.yoctodb" %  "yoctodb-core"    % "0.0.19",    //take a look at "0.0.20",
   "dev.zio"            %% "zio-prelude"     % "1.0.0-RC8",
+
+  "com.softwaremill.magnolia1_3" %% "magnolia" % "1.0.0",
+
+  //"dev.zio" %% "zio-schema" % "0.1.4",
 
   "com.thesamet.scalapb" %% "scalapb-runtime" % scalapb.compiler.Version.scalapbVersion % "protobuf",
 
   //https://repo1.maven.org/maven2/com/lihaoyi/ammonite_3.0.1/2.4.0-11-5b9ff5e7/
-  //("com.lihaoyi" % "ammonite"  % "2.4.0-14-4824b429"  % "test").cross(CrossVersion.full)
+  //("com.lihaoyi" % "ammonite"  % "2.5.0"  % "test").cross(CrossVersion.full)
 )
 
 //Compile / scalacOptions --= Seq("-Xfatal-warnings", "-Ywarn-unused:imports", "-Yno-imports", "-deprecation")
