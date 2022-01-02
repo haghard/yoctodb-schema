@@ -31,3 +31,9 @@ Zymposium - ZIO schema: https://youtu.be/GfNiDaL5aIM
 ## License
 
 This code is open source software licensed under the [Apache 2.0 License](http://www.apache.org/licenses/LICENSE-2.0.html).
+
+
+
+### Future work 
+
+TODO: extract schema from index
