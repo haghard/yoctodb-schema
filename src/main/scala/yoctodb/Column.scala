@@ -65,7 +65,7 @@ object Column:
       ).asInstanceOf[Schema & Column[B]]
 
     /*
-      2.13.6
+      2.13.8
       def column[T <: CEntry[?]](implicit tag: Tag[T], ev: Schema <:< Column[T]): T =
         schema.underlying(tag).asInstanceOf[T]
 

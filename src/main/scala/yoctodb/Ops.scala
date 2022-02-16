@@ -5,6 +5,7 @@
 package yoctodb
 
 import yoctodb.schema.games.v1.GamesSchema
+import yoctodb.schema.games.v1.GamesSchema.Pcolumn
 
 sealed trait Ops[T]
 
@@ -22,7 +23,7 @@ trait FilterableNum[T](using n: Numeric[T]) extends Filterable[T]:
   def lt$(v: T): com.yandex.yoctodb.query.TermCondition
   def lte$(v: T): com.yandex.yoctodb.query.TermCondition
 
-trait FilterableChars[T](using T <:< java.lang.CharSequence) extends Filterable[T]
+trait FilterableChars[A](using A <:< java.lang.CharSequence) extends Filterable[A]
 
 //com.yandex.yoctodb.mutable.DocumentBuilder.IndexOption.SORTABLE -- the field can be used to sort documents
 private trait Sortable[T] extends Ops[T]:
@@ -53,3 +54,11 @@ trait BothChars[T](using T <:< java.lang.CharSequence) extends Both[T]:
   def in$(vs: scala.collection.immutable.Set[T]): com.yandex.yoctodb.query.TermCondition
   def descOrd: com.yandex.yoctodb.query.Order
   def ascOrd: com.yandex.yoctodb.query.Order
+
+sealed trait Ops2[T, A]
+private trait Filterable2[A, T] extends Ops2[A, T]:
+  def eq$(v: T): com.yandex.yoctodb.query.TermCondition
+  def in$(vs: scala.collection.immutable.Set[T]): com.yandex.yoctodb.query.TermCondition
+  def notEq$(v: T): com.yandex.yoctodb.query.Condition = com.yandex.yoctodb.query.QueryBuilder.not(eq$(v))
+
+trait FilterableChars2[T, A](using A <:< java.lang.CharSequence) extends Filterable2[T, A]
