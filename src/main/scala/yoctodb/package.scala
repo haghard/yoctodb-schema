@@ -2,9 +2,10 @@
 // This software is licensed under the Apache License, Version 2.0.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0.
 
-import zio.prelude.*
-import zio.prelude.{ Subtype, Validation }
 import zio.prelude.Assertion.*
+import zio.prelude.Subtype
+import zio.prelude.Validation
+import zio.prelude.*
 
 package object yoctodb:
 

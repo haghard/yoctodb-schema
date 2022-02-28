@@ -11,6 +11,7 @@ lazy val scalac3Settings = Seq(
     //"-Xfatal-warnings",
     //"-Yexplicit-nulls",
     //"-Wunused",
+    "-Ywarn-unused",  //sfix
     "-Ykind-projector",
     "-Ysafe-init", //guards against forward access reference
   ) ++ Seq("-rewrite", "-indent") ++ Seq("-source", "future")
@@ -96,3 +97,4 @@ addCommandAlias("sfix", "scalafix OrganizeImports; test:scalafix OrganizeImports
 addCommandAlias("sFixCheck", "scalafix --check OrganizeImports; test:scalafix --check OrganizeImports")
 
 addCommandAlias("c", "compile")
+addCommandAlias("r", "reload")

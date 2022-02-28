@@ -73,9 +73,12 @@ object Example:
       },
     )
 
-  /** Why prefer zio.Validation over Either? Either short-circuits on failure. If validation errors occur, we just get
-    * the first one. For more information see: https://youtu.be/Hj4fRrlKHeY. You can go for Either[NonEmptyList[String],
-    * Unit] but it requires boilerplate.
+  /** Why prefer zio.Validation over Either?
+    *
+    * Either short-circuits on failure. If validation errors occur, we just get the first one. For more information see:
+    * https://youtu.be/Hj4fRrlKHeY.
+    *
+    * You can go for Either[NonEmptyList[String],Unit] but it requires boilerplate.
     */
   def isValidSchema(yoctoDb: V1Database): Validation[String, Boolean] =
     Validation.validateWith(
