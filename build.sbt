@@ -56,11 +56,11 @@ resolvers ++= Seq(Resolver.jcenterRepo, "Sonatype Public" at "https://oss.sonaty
 unmanagedBase := baseDirectory.value / "lib"
 
 libraryDependencies ++= Seq(
-  //"dev.zio" %% "izumi-reflect" % "1.1.2",
+  //"dev.zio" %% "izumi-reflect" % "1.1.3",
   "com.typesafe"       %  "config"          % "1.4.2",
   "ch.qos.logback"     %  "logback-classic" % "1.2.10",
   "com.yandex.yoctodb" %  "yoctodb-core"    % "0.0.20",
-  "dev.zio"            %% "zio-prelude"     % "1.0.0-RC8",
+  "dev.zio"            %% "zio-prelude"     % "1.0.0-RC10",
 
   "com.softwaremill.magnolia1_3" %% "magnolia" % "1.1.0",
 

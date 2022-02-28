@@ -12,8 +12,7 @@ import CEntry.*
 
 final case class Column[+A <: CEntry[?]] private (
     private val underlying: Map[Tag[?], A],
-    private val columnNames: Set[String],
-  ):
+    private val columnNames: Set[String]):
   self =>
 
   def columns = self.columnNames - EmptyColumn
@@ -49,15 +48,13 @@ object Column:
 
     inline def ++[B <: CEntry[?]](
         that: Column[B]
-      )(using
-        scala.util.NotGiven[Schema <:< Column[B]]
+      )(using scala.util.NotGiven[Schema <:< Column[B]]
       ): Schema & Column[B] =
       union(that)
 
     infix def union[B <: CEntry[?]](
         that: Column[B]
-      )(using
-        scala.util.NotGiven[Schema <:< Column[B]]
+      )(using scala.util.NotGiven[Schema <:< Column[B]]
       ): Schema & Column[B] =
       new Column(
         (schema.underlying ++ that.underlying).asInstanceOf[Map[Tag[?], CEntry[?]]],

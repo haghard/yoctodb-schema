@@ -43,32 +43,32 @@ sealed trait CEntry[A]:
 object CEntry:
 
   final case class GameFullStage(
-      protoColumn: Pcolumn = Pcolumn.Stage(games_stage(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable))
-    ) extends CEntry[String]:
+      protoColumn: Pcolumn = Pcolumn.Stage(games_stage(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable)))
+      extends CEntry[String]:
     val term: FilterableChars[String] = new FilterableChars[String] {
       def eq$(stageName: String) = equality(columnName, from(stageName))
       def in$(stages: Set[String]) = multiEquality(columnName, stages.map(from(_)).toSeq*)
     }
 
   final case class GameAwayTeam(
-      protoColumn: Pcolumn = Pcolumn.AwayTeam(games_at(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable))
-    ) extends CEntry[String]:
+      protoColumn: Pcolumn = Pcolumn.AwayTeam(games_at(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable)))
+      extends CEntry[String]:
     val term: FilterableChars[String] = new FilterableChars[String] {
       def eq$(team: String) = equality(columnName, from(columnName))
       def in$(teams: Set[String]) = multiEquality(columnName, teams.map(from(_)).toSeq*)
     }
 
   final case class GameHomeTeam(
-      protoColumn: Pcolumn = Pcolumn.HomeTeam(games_ht(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable))
-    ) extends CEntry[String]:
+      protoColumn: Pcolumn = Pcolumn.HomeTeam(games_ht(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable)))
+      extends CEntry[String]:
     val term: FilterableChars[String] = new FilterableChars[String] {
       def eq$(team: String) = equality(columnName, from(team))
       def in$(teams: Set[String]) = multiEquality(columnName, teams.map(from(_)).toSeq*)
     }
 
   final case class GameYear(
-      protoColumn: Pcolumn = Pcolumn.Year(games_yy(GamesSchema.FieldType.Integer, GamesSchema.IndexType.Both))
-    ) extends CEntry[Int]:
+      protoColumn: Pcolumn = Pcolumn.Year(games_yy(GamesSchema.FieldType.Integer, GamesSchema.IndexType.Both)))
+      extends CEntry[Int]:
     val term: BothNums[Int] = new BothNums[Int] {
       def gt$(yy: Int) = greaterThan(columnName, from(yy))
       def gte$(yy: Int) = greaterOrEqThan(columnName, from(yy))
@@ -81,8 +81,8 @@ object CEntry:
     }
 
   final case class GameMonth(
-      protoColumn: Pcolumn = Pcolumn.Month(games_mm(GamesSchema.FieldType.Integer, GamesSchema.IndexType.Both))
-    ) extends CEntry[Int]:
+      protoColumn: Pcolumn = Pcolumn.Month(games_mm(GamesSchema.FieldType.Integer, GamesSchema.IndexType.Both)))
+      extends CEntry[Int]:
     val term: BothNums[Int] = new BothNums[Int] {
       def gt$(month: Int) = greaterThan(columnName, from(month))
       def gte$(month: Int) = greaterOrEqThan(columnName, from(month))
@@ -95,8 +95,8 @@ object CEntry:
     }
 
   final case class GameDay(
-      protoColumn: Pcolumn = Pcolumn.Day(games_dd(GamesSchema.FieldType.Integer, GamesSchema.IndexType.Both))
-    ) extends CEntry[Int]:
+      protoColumn: Pcolumn = Pcolumn.Day(games_dd(GamesSchema.FieldType.Integer, GamesSchema.IndexType.Both)))
+      extends CEntry[Int]:
     val term: BothNums[Int] = new BothNums[Int] {
       def gt$(day: Int) = greaterThan(columnName, from(day))
       def gte$(day: Int) = greaterOrEqThan(columnName, from(day))
@@ -109,16 +109,16 @@ object CEntry:
     }
 
   final case class GameWinner(
-      protoColumn: Pcolumn = Pcolumn.Winner(games_winner(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable))
-    ) extends CEntry[String]:
+      protoColumn: Pcolumn = Pcolumn.Winner(games_winner(GamesSchema.FieldType.Str, GamesSchema.IndexType.Filterable)))
+      extends CEntry[String]:
     val term: FilterableChars[String] = new FilterableChars[String] {
       def eq$(team: String) = equality(columnName, from(team))
       def in$(teams: Set[String]) = multiEquality(columnName, teams.map(from(_)).toSeq*)
     }
 
   final case class GameTime(
-      protoColumn: Pcolumn = Pcolumn.Time(games_ts(GamesSchema.FieldType.Lng, GamesSchema.IndexType.Sortable))
-    ) extends CEntry[Long]:
+      protoColumn: Pcolumn = Pcolumn.Time(games_ts(GamesSchema.FieldType.Lng, GamesSchema.IndexType.Sortable)))
+      extends CEntry[Long]:
     val term: SortableNum[Long] = new SortableNum[Long] {
       val descOrd = desc(columnName)
       val ascOrd = asc(columnName)

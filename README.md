@@ -11,6 +11,8 @@
 
 Maybe codegen for `CEntry` cases
 
+Try this https://medium.com/riskified-technology/type-class-derivation-in-scala-3-ba3c7c41d3ef
+
 
 
 ### ZIO links 
@@ -37,3 +39,16 @@ This code is open source software licensed under the [Apache 2.0 License](http:/
 ### Future work 
 
 TODO: extract schema from index
+
+Code and slides on type class derivation in Scala 3. 
+
+
+
+
+https://github.com/ron-aharoni/deriving-meetup.git
+Code and slides on type class derivation in Scala 3. 
+[Blog](https://medium.com/riskified-technology/type-class-derivation-in-scala-3-ba3c7c41d3ef) 
+[Video](https://www.youtube.com/watch?v=G4LyR3a4RWw).
+
+
+Create Custom Linters Using Tasty Inspection by Vincent de Haan: https://youtu.be/zq00DKVK95I?list=LL
