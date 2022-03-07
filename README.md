@@ -52,3 +52,6 @@ Code and slides on type class derivation in Scala 3.
 
 
 Create Custom Linters Using Tasty Inspection by Vincent de Haan: https://youtu.be/zq00DKVK95I?list=LL
+
+
+Generating Libraries: https://youtu.be/HCPTmytex3U
