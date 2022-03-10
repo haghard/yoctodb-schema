@@ -1,24 +1,49 @@
-// Copyright (c) 2021 by Vadim Bondarev
+// Copyright (c) 2021-22 by Vadim Bondarev
 // This software is licensed under the Apache License, Version 2.0.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0.
 
-import zio.prelude.Assertion.*
-import zio.prelude.Subtype
-import zio.prelude.Validation
-import zio.prelude.*
+import com.yandex.yoctodb.v1.immutable.V1Database
+import mazboot.validations.FromPredicate
+import mazboot.validations.strings.MatchesRegex
+import yoctodb.GamesIndex.{ FilterableSegment, SortableSegment, checkFilteredSegment, checkSortedSegment }
 
 package object yoctodb:
 
   val EmptyColumn = "empty"
 
-  object Team extends Subtype[String]:
-    inline override def assertion =
-      matches("lal|lac|por|chi|sea|hou|mia|okc|den|mil|ind|atl|min|tor|gsw")
+  open private class TeamRegex()
+      extends FromPredicate[String](
+        _.matches("lal|lac|por|chi|sea|hou|mia|okc|den|mil|ind|atl|min|tor|gsw"),
+        "Team match pattern error !",
+      )
 
-  type Team = Team.Type
+  open private class StageRegex()
+      extends FromPredicate[String](_.matches("(season|playoff)-[0-9]{2}-[0-9]{2}"), "Stage match pattern error !")
 
-  object Stage extends Subtype[String]:
-    inline override def assertion =
-      matches("(season|playoff)-[0-9]{2}-[0-9]{2}")
+  open private class FilterableSchema()
+      extends FromPredicate[V1Database](
+        { yoctoDb => checkFilteredSegment(yoctoDb, FilterableSegment.columns) },
+        "Filterable schema region mismatch !",
+      )
 
-  type Stage = Stage.Type
+  open private class SortableSchema()
+      extends FromPredicate[V1Database](
+        { yoctoDb => checkSortedSegment(yoctoDb, SortableSegment.columns) },
+        "Sortable schema region mismatch !",
+      )
+
+  val Team = TeamRegex()
+  type Team = Team.Valid
+  type TeamErr = Team.Error
+
+  val Stage = StageRegex()
+  type Stage = Stage.Valid
+  type StageErr = Stage.Error
+
+  val FSchema = FilterableSchema()
+  type FSchema = FSchema.Valid
+  type FSchemaErr = FSchema.Error
+
+  val SSchema = SortableSchema()
+  type SSchema = SSchema.Valid
+  type SSchemaErr = SSchema.Error

@@ -2,6 +2,7 @@ import sbt._
 
 lazy val `yoctodb-schema` = (project in file(".")).settings(commonSettings)
 
+
 lazy val scalac3Settings = Seq(
   scalacOptions ++= Seq(
     //"-deprecation",
@@ -57,15 +58,18 @@ resolvers ++= Seq(Resolver.jcenterRepo, "Sonatype Public" at "https://oss.sonaty
 unmanagedBase := baseDirectory.value / "lib"
 
 libraryDependencies ++= Seq(
-  //"dev.zio" %% "izumi-reflect" % "1.1.3",
   "com.typesafe"       %  "config"          % "1.4.2",
-  "ch.qos.logback"     %  "logback-classic" % "1.2.10",
+  "ch.qos.logback"     %  "logback-classic" % "1.2.11",
   "com.yandex.yoctodb" %  "yoctodb-core"    % "0.0.20",
-  "dev.zio"            %% "zio-prelude"     % "1.0.0-RC10",
+
+  "dev.zio"   %% "izumi-reflect" % "2.0.8",
 
   "com.softwaremill.magnolia1_3" %% "magnolia" % "1.1.0",
 
-  //"dev.zio" %% "zio-schema" % "0.1.4",
+
+  //Boilerplate Free Validations Using Scala 3 - Tamer Abdulradi: https://youtu.be/y2j-oZ8uHuo
+  //https://github.com/tabdulradi/mazboot
+  "com.abdulradi" %% "mazboot-types" % "0.5.0",
 
   "com.thesamet.scalapb" %% "scalapb-runtime" % scalapb.compiler.Version.scalapbVersion % "protobuf",
 
@@ -79,11 +83,13 @@ promptTheme := ScalapenosTheme
 
 scalafmtOnCompile := true
 
-/*Test / sourceGenerators += Def.task {
+/*
+Test / sourceGenerators += Def.task {
   val file = (Test / sourceManaged).value / "amm.scala"
   IO.write(file, """object amm extends App { ammonite.Main().run() }""")
   Seq(file)
-}.taskValue*/
+}.taskValue
+*/
 
 Compile / PB.targets := Seq(scalapb.gen() -> (Compile / sourceManaged).value)
 

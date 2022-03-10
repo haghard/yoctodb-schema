@@ -1,4 +1,4 @@
-// Copyright (c) 2021 by Vadim Bondarev
+// Copyright (c) 2021-22 by Vadim Bondarev
 // This software is licensed under the Apache License, Version 2.0.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0.
 
@@ -10,9 +10,11 @@ import com.yandex.yoctodb.v1.immutable.V1Database
 import yoctodb.schema.games.v1.GamesSchema
 import yoctodb.schema.games.v1.GamesSchema.Pcolumn
 import yoctodb.schema.games.v1.GamesSchema.*
-import zio.prelude.Validation
 
 import CEntry.*
+
+import mazboot.net.*
+import mazboot.validations.*
 
 object GamesIndex:
 
@@ -175,9 +177,64 @@ object GamesIndex:
         .flatten
         .mkString("\n")
 
-  // Subtype for stage that should match defined regexp
-  // See more there: https://youtu.be/M3HmROwOoRU?t=1357
-  def stage(v: String): Validation[String, Stage] = Stage.make(v)
+  def stage(v: String): StageErr | Stage = yoctodb.Stage.validate(v)
+  def team(v: String): TeamErr | Team = yoctodb.Team.validate(v)
 
-  // SubtypeSmart for team name that should match defined regexp
-  def team(v: String): Validation[String, Team] = Team.make(v)
+  def stageE(v: String): Either[StageErr, Stage] = yoctodb.Stage.validateEither(v)
+  def teamE(v: String): Either[TeamErr, Team] = yoctodb.Team.validateEither(v)
+
+  def teamV(v: String): Either[String, String] =
+    yoctodb.Team.validateWith(v, v => Right(v.toString), err => Left(err.raw + ":" + err.message))
+
+  def validateBoth(): FromPredicate.Aux[String, Stage | Team] =
+    yoctodb.Stage.or(yoctodb.Team)
+
+  def runV(
+      input: String
+    ): FromPredicate.Aux[String, Stage | Team]#Error | FromPredicate.Aux[String, Stage | Team]#Valid =
+    validateBoth().validate(input)
+
+  def runEither(
+      input: String
+    ): Either[FromPredicate.Aux[String, Stage | Team]#Error, FromPredicate.Aux[String, Stage | Team]#Valid] =
+    validateBoth().validateEither(input)
+
+  def bothTeams(a: String, b: String): Either[List[TeamErr], (Team, Team)] =
+    teamE(a).left.map(err => List(err)) match
+      case Left(errors) =>
+        teamE(b) match
+          case Right(value) => Left(errors)
+          case Left(err)    => Left(err :: errors)
+      case Right(a) =>
+        teamE(b).map(b => (a, b)).left.map(er => List(er))
+
+  def bothStages(a: String, b: String): Either[List[StageErr], (Stage, Stage)] =
+    stageE(a).left.map(err => List(err)) match
+      case Left(errors) =>
+        stageE(b) match
+          case Right(value) => Left(errors)
+          case Left(err)    => Left(err :: errors)
+      case Right(a) =>
+        stageE(b).map(b => (a, b)).left.map(er => List(er))
+
+  def validateSchema(yoctoDb: V1Database): Either[List[?], (FSchema, SSchema)] =
+    FSchema.validateEither(yoctoDb).left.map(err => List(err)) match
+      case Left(errors) =>
+        SSchema.validateEither(yoctoDb) match
+          case Right(value) => Left(errors)
+          case Left(err)    => Left(err :: errors)
+      case Right(f) =>
+        SSchema.validateEither(yoctoDb).map(s => (f, s)).left.map(er => List(er))
+
+  runEither("season-19-20") match
+    case Left(err) => println("Error: " + err)
+    case Right(v)  => println(s"out: $v")
+
+  team("lal") match
+    case err: TeamErr => println("Error: " + err)
+    case r            => println(s"out: $r")
+
+// def validateSchema(yoctoDb: V1Database) = FSchema.and(SSchema).validateEither(yoctoDb)
+
+/*: FromPredicate.Aux[V1Database, FSchema | SSchema]#Error | FromPredicate.Aux[V1Database, FSchema | SSchema]#Valid*/
+// FSchema.and(SSchema).validate(yoctoDb)
