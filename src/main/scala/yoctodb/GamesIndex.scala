@@ -202,29 +202,21 @@ object GamesIndex:
   def bothTeams(a: String, b: String): Either[List[TeamErr], (Team, Team)] =
     teamE(a).left.map(err => List(err)) match
       case Left(errors) =>
-        teamE(b) match
-          case Right(value) => Left(errors)
-          case Left(err)    => Left(err :: errors)
+        teamE(b).fold(err => Left(err :: errors), _ => Left(errors))
       case Right(a) =>
         teamE(b).map(b => (a, b)).left.map(er => List(er))
 
   def bothStages(a: String, b: String): Either[List[StageErr], (Stage, Stage)] =
+    val s = stageE(b)
     stageE(a).left.map(err => List(err)) match
-      case Left(errors) =>
-        stageE(b) match
-          case Right(value) => Left(errors)
-          case Left(err)    => Left(err :: errors)
-      case Right(a) =>
-        stageE(b).map(b => (a, b)).left.map(er => List(er))
+      case Left(errors) => s.fold(err => Left(err :: errors), _ => Left(errors))
+      case Right(a)     => s.map(b => (a, b)).left.map(er => List(er))
 
   def validateSchema(yoctoDb: V1Database): Either[List[?], (FSchema, SSchema)] =
+    val s = SSchema.validateEither(yoctoDb)
     FSchema.validateEither(yoctoDb).left.map(err => List(err)) match
-      case Left(errors) =>
-        SSchema.validateEither(yoctoDb) match
-          case Right(value) => Left(errors)
-          case Left(err)    => Left(err :: errors)
-      case Right(f) =>
-        SSchema.validateEither(yoctoDb).map(s => (f, s)).left.map(er => List(er))
+      case Left(errors) => s.fold(err => Left(err :: errors), _ => Left(errors))
+      case Right(f)     => s.map(s => (f, s)).left.map(er => List(er))
 
   runEither("season-19-20") match
     case Left(err) => println("Error: " + err)
