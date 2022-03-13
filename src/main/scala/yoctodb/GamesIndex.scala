@@ -48,7 +48,7 @@ object GamesIndex:
   type Filterable =
     Column[GameHomeTeam & GameWinner & GameYear & (GameFullStage & GameAwayTeam & (GameMonth & GameDay))]
 
-  // Precisely defined filterable schema of the GamesIndex as a value (intersection|products)
+  // Precisely defined filterable schema of the GamesIndex as a value of intersection|products type
   val FilterableSegment /*: Filterable*/ =
     Column(fullStage) ++ Column(awayTeam) ++ Column(homeTeam) ++ Column(winner) ++ Column(year) ++ Column(
       month
@@ -65,6 +65,7 @@ object GamesIndex:
   type Union =
     Column[GameTime] | Column[GameYear] | Column[GameMonth] |
       Column[GameDay] // union types(sum types, modeled as sealed traits)
+
   type Intersection =
     Column[GameTime] & Column[GameDay] & Column[GameTime] // intersection types (products, modeled as case classes)
 
@@ -72,6 +73,7 @@ object GamesIndex:
   // Union type is a subtype of Column[CEntry[?]] or, differently expressed: an instance of Union can be considered as being an instance of Column[CEntry[?]].
 
   summon[Intersection <:< Column[CEntry[?]]]
+  // Intersection type is a subtype of Column[CEntry[?]] or, differently expressed: an instance of Union can be considered as being an instance of Column[CEntry[?]].
 
   implicitly[Column[GameTime] with Column[GameDay] <:< Column[CEntry[?]]]
   implicitly[Column[GameTime] <:< Column[CEntry[?]]]
@@ -84,6 +86,8 @@ object GamesIndex:
   implicitly[Column[GameTime] with Column[GameDay] <:< Column[GameDay]]
   implicitly[Column[GameAwayTeam] <:< Column[?]]
   implicitly[Column[GameAwayTeam] with Column[GameDay] <:< Column[GameDay]]
+
+  implicitly[Column[GameTime & GameDay] <:< Column[CEntry[?]]]
 
   // ******************************************************************************************************************/
 
@@ -222,6 +226,7 @@ object GamesIndex:
     case Left(err) => println("Error: " + err)
     case Right(v)  => println(s"out: $v")
 
+  // safe
   team("lal") match
     case err: TeamErr => println("Error: " + err)
     case r            => println(s"out: $r")
