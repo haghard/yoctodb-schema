@@ -2,8 +2,8 @@ import sbt._
 
 lazy val `yoctodb-schema` = (project in file(".")).settings(commonSettings)
 
-
 lazy val scalac3Settings = Seq(
+  //https://docs.scala-lang.org/scala3/guides/migration/options-new.html#standard-settings
   scalacOptions ++= Seq(
     //"-deprecation",
     "-feature",
@@ -64,7 +64,7 @@ libraryDependencies ++= Seq(
 
   "dev.zio"   %% "izumi-reflect" % "2.0.8",
 
-  "com.softwaremill.magnolia1_3" %% "magnolia" % "1.1.0",
+  "com.softwaremill.magnolia1_3" %% "magnolia" % "1.1.1",
 
 
   //Boilerplate Free Validations Using Scala 3 - Tamer Abdulradi: https://youtu.be/y2j-oZ8uHuo

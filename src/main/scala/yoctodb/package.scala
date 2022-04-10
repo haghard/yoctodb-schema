@@ -11,39 +11,39 @@ package object yoctodb:
 
   val EmptyColumn = "empty"
 
-  open private class TeamRegex()
+  private class TeamRegexInvariant()
       extends FromPredicate[String](
         _.matches("lal|lac|por|chi|sea|hou|mia|okc|den|mil|ind|atl|min|tor|gsw"),
         "Team match pattern error !",
       )
 
-  open private class StageRegex()
+  private class StageRegexInvariant()
       extends FromPredicate[String](_.matches("(season|playoff)-[0-9]{2}-[0-9]{2}"), "Stage match pattern error !")
 
-  open private class FilterableSchema()
+  private class FilterableSchemaInvariant()
       extends FromPredicate[V1Database](
         { yoctoDb => checkFilteredSegment(yoctoDb, FilterableSegment.columns) },
         "Filterable schema region mismatch !",
       )
 
-  open private class SortableSchema()
+  private class SortableSchemaInvariant()
       extends FromPredicate[V1Database](
         { yoctoDb => checkSortedSegment(yoctoDb, SortableSegment.columns) },
         "Sortable schema region mismatch !",
       )
 
-  val Team = TeamRegex()
+  val Team = TeamRegexInvariant()
   type Team = Team.Valid
   type TeamErr = Team.Error
 
-  val Stage = StageRegex()
+  val Stage = StageRegexInvariant()
   type Stage = Stage.Valid
   type StageErr = Stage.Error
 
-  val FSchema = FilterableSchema()
+  val FSchema = FilterableSchemaInvariant()
   type FSchema = FSchema.Valid
   type FSchemaErr = FSchema.Error
 
-  val SSchema = SortableSchema()
+  val SSchema = SortableSchemaInvariant()
   type SSchema = SSchema.Valid
   type SSchemaErr = SSchema.Error
