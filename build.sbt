@@ -43,7 +43,7 @@ lazy val commonSettings = scalac3Settings ++ Seq(
 
   //sbt headerCreate
   licenses += ("Apache-2.0", new URL("https://www.apache.org/licenses/LICENSE-2.0.txt")),
-  scalaVersion := "3.1.1",
+  scalaVersion := "3.1.2",
   headerMappings := headerMappings.value + (HeaderFileType.scala -> HeaderCommentStyle.cppStyleLineComment),
   headerLicense  := Some(HeaderLicense.Custom(
     """|Copyright (c) 2021-22 by Vadim Bondarev
@@ -62,7 +62,7 @@ libraryDependencies ++= Seq(
   "ch.qos.logback"     %  "logback-classic" % "1.2.11",
   "com.yandex.yoctodb" %  "yoctodb-core"    % "0.0.20",
 
-  "dev.zio"   %% "izumi-reflect" % "2.0.8",
+  "dev.zio"   %% "izumi-reflect" % "2.1.0",
 
   "com.softwaremill.magnolia1_3" %% "magnolia" % "1.1.1",
 
