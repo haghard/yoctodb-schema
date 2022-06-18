@@ -64,17 +64,23 @@ libraryDependencies ++= Seq(
 
   "dev.zio"   %% "izumi-reflect" % "2.1.0",
 
-  "com.softwaremill.magnolia1_3" %% "magnolia" % "1.1.1",
-
+  "com.softwaremill.magnolia1_3" %% "magnolia" % "1.1.4",
 
   //Boilerplate Free Validations Using Scala 3 - Tamer Abdulradi: https://youtu.be/y2j-oZ8uHuo
   //https://github.com/tabdulradi/mazboot
   "com.abdulradi" %% "mazboot-types" % "0.5.0",
 
+
+  //https://medium.com/scalac/inline-your-boilerplate-harnessing-scala-3-metaprogramming-without-macros-c106ef8d6dfb
+  //https://github.com/arainko/ducktape
+  "io.github.arainko" %% "ducktape" % "0.0.13",
+
   "com.thesamet.scalapb" %% "scalapb-runtime" % scalapb.compiler.Version.scalapbVersion % "protobuf",
 
   //https://repo1.maven.org/maven2/com/lihaoyi/ammonite_3.0.1/2.4.0-11-5b9ff5e7/
-  //("com.lihaoyi" % "ammonite"  % "2.5.2"  % "test").cross(CrossVersion.full)
+  //https://repo1.maven.org/maven2/com/lihaoyi/ammonite_3.1.2/2.5.4-2-71d100df/
+  //("com.lihaoyi" % "ammonite" % "2.5.4" % "test").cross(CrossVersion.full)
+  //("com.lihaoyi" % "ammonite" % "2.5.4-2-71d100df" % "test").cross(CrossVersion.full)
 )
 
 //Compile / scalacOptions --= Seq("-Xfatal-warnings", "-Ywarn-unused:imports", "-Yno-imports", "-deprecation")

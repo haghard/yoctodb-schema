@@ -55,3 +55,13 @@ Create Custom Linters Using Tasty Inspection by Vincent de Haan: https://youtu.b
 
 
 Generating Libraries: https://youtu.be/HCPTmytex3U
+
+Generic records: https://github.com/mvv/sager
+
+
+## Inline your boilerplate — harnessing Scala 3 metaprogramming without macros
+
+https://medium.com/scalac/inline-your-boilerplate-harnessing-scala-3-metaprogramming-without-macros-c106ef8d6dfb
+https://github.com/arainko/ducktape
+
+"io.github.arainko" %% "ducktape" % "0.0.13",
