@@ -9,6 +9,12 @@ import com.yandex.yoctodb.immutable.Database
 import com.yandex.yoctodb.query.QueryBuilder as yocto
 import com.yandex.yoctodb.util.buf.Buffer
 import com.yandex.yoctodb.v1.immutable.V1Database
+import mazboot.ints.GreaterThanOrEqualsOne
+import mazboot.ints.Positive
+import mazboot.net.*
+import mazboot.validations.*
+import mazboot.validations.strings.MatchesRegex
+import mazboot.validations.strings.StartsWith
 import org.slf4j.LoggerFactory
 import yoctodb.schema.games.v1.NbaResultPB
 
@@ -20,12 +26,6 @@ import scala.util.Try
 
 import GamesIndex.*
 import CEntry.*
-
-import mazboot.net.*
-import mazboot.validations.*
-import mazboot.validations.strings.StartsWith
-import mazboot.validations.strings.MatchesRegex
-import mazboot.ints.{ GreaterThanOrEqualsOne, Positive }
 
 //comment it before test:compile
 @main def app(): Unit = Example()

@@ -7,9 +7,10 @@ package yoctodb
 import izumi.reflect.Tag
 import yoctodb.schema.games.v1.GamesSchema
 import yoctodb.schema.games.v1.GamesSchema.*
-import CEntry.*
 
 import scala.annotation.implicitNotFound
+
+import CEntry.*
 
 final case class Column[+A <: CEntry[?]] private (
     private val underlying: Map[Tag[?], A],

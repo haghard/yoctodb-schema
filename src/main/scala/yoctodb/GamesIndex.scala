@@ -7,14 +7,13 @@ package yoctodb
 import com.yandex.yoctodb.query.Order
 import com.yandex.yoctodb.util.UnsignedByteArrays.from
 import com.yandex.yoctodb.v1.immutable.V1Database
+import mazboot.net.*
+import mazboot.validations.*
 import yoctodb.schema.games.v1.GamesSchema
 import yoctodb.schema.games.v1.GamesSchema.Pcolumn
 import yoctodb.schema.games.v1.GamesSchema.*
 
 import CEntry.*
-
-import mazboot.net.*
-import mazboot.validations.*
 
 object GamesIndex:
 

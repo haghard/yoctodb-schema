@@ -5,7 +5,10 @@
 import com.yandex.yoctodb.v1.immutable.V1Database
 import mazboot.validations.FromPredicate
 import mazboot.validations.strings.MatchesRegex
-import yoctodb.GamesIndex.{ FilterableSegment, SortableSegment, checkFilteredSegment, checkSortedSegment }
+import yoctodb.GamesIndex.FilterableSegment
+import yoctodb.GamesIndex.SortableSegment
+import yoctodb.GamesIndex.checkFilteredSegment
+import yoctodb.GamesIndex.checkSortedSegment
 
 package object yoctodb:
 
