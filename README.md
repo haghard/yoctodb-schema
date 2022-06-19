@@ -56,7 +56,14 @@ Create Custom Linters Using Tasty Inspection by Vincent de Haan: https://youtu.b
 
 Generating Libraries: https://youtu.be/HCPTmytex3U
 
-Generic records: https://github.com/mvv/sager
+
+### Generic records: 
+
+https://github.com/mvv/sager
+
+https://gist.github.com/johnynek/1e3cbddf461bd3da9b00e2f4f126c253
+yoctodb.samples.Records
+
 
 
 ## Inline your boilerplate — harnessing Scala 3 metaprogramming without macros
