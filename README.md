@@ -29,6 +29,7 @@ Zymposium - ZIO Prelude: https://youtu.be/M3HmROwOoRU (Validations, NewType and 
 
 Zymposium - ZIO schema: https://youtu.be/GfNiDaL5aIM
 
+https://youtu.be/3ScqDZp9X3c
 
 ## License
 
@@ -59,11 +60,11 @@ Generating Libraries: https://youtu.be/HCPTmytex3U
 
 ### Generic records: 
 
+
 https://github.com/mvv/sager
 
-https://gist.github.com/johnynek/1e3cbddf461bd3da9b00e2f4f126c253
 yoctodb.samples.Records
-
+https://gist.github.com/johnynek/1e3cbddf461bd3da9b00e2f4f126c253
 
 
 ## Inline your boilerplate — harnessing Scala 3 metaprogramming without macros

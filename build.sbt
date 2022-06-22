@@ -73,7 +73,9 @@ libraryDependencies ++= Seq(
 
   //https://medium.com/scalac/inline-your-boilerplate-harnessing-scala-3-metaprogramming-without-macros-c106ef8d6dfb
   //https://github.com/arainko/ducktape
-  "io.github.arainko" %% "ducktape" % "0.0.13",
+  //"io.github.arainko" %% "ducktape" % "0.0.13",
+
+  "com.github.mvv.sager" %% "sager" % "0.2-M1",
 
   "com.thesamet.scalapb" %% "scalapb-runtime" % scalapb.compiler.Version.scalapbVersion % "protobuf",
 
