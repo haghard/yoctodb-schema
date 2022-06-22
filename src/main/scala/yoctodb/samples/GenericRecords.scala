@@ -21,7 +21,7 @@ import yoctodb.schema.games.v1.GamesSchema
 import yoctodb.schema.games.v1.GamesSchema.*
 
 //Another take on generic records: https://gist.github.com/johnynek/1e3cbddf461bd3da9b00e2f4f126c253
-object Records:
+object GenericRecords:
 
   object Record:
     // use this scope to bound who can see inside the opaque type
