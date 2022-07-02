@@ -39,12 +39,12 @@ This code is open source software licensed under the [Apache 2.0 License](http:/
 
 ### Future work 
 
+Generate `GameFullStage`, `GameAwayTeam` etc. classes by the protobuf definition. 
+For example: https://github.com/haghard/play-grpc-gateway/tree/master/src/main/twirl/templates/PlayScala
+
 TODO: extract schema from index
 
-Code and slides on type class derivation in Scala 3. 
-
-
-
+Code and slides on type class derivation in Scala 3.
 
 https://github.com/ron-aharoni/deriving-meetup.git
 Code and slides on type class derivation in Scala 3. 
