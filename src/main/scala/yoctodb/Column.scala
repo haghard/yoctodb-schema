@@ -44,13 +44,17 @@ final case class Column[+A <: CEntry[?]] private (
   * https://github.com/DevInsideYou/zionutshell/blob/main/src/main/scala/dev/insideyou/zionutshell/Has.scala)
   *
   * d) Scala 3: Anti-Givens https://youtu.be/HQojyuZK-Uo
+  *
+  * e) Metadata types: https://mhammons.hashnode.dev/metadata-types-with-scala-3
   */
 object Column:
 
-  // generates because Column[GameDay] is not a supertype of Column[GameFullStage & GameAwayTeam]
+  // fails to generate because Column[GameDay] is not a supertype of Column[GameFullStage & GameAwayTeam]
+  // or Column[GameFullStage & GameAwayTeam] is not a subtype of Column[GameDay]
   implicitly[scala.util.NotGiven[Column[GameFullStage & GameAwayTeam] <:< Column[GameDay]]]
 
-  // Column[GameAwayTeam] is a supertype of Column[GameFullStage & GameAwayTeam]
+  // Is Column[GameFullStage & GameAwayTeam] is a subtype of Column[GameAwayTeam]
+  // Is Column[GameAwayTeam] is a supertype Column[GameFullStage & GameAwayTeam]
   implicitly[Column[GameFullStage & GameAwayTeam] <:< Column[GameAwayTeam]]
 
   // fails to generate ev: NotGiven because Column[GameAwayTeam] is a supertype of Column[GameFullStage & GameAwayTeam]
