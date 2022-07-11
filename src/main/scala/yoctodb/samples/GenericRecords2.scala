@@ -3,6 +3,7 @@ package yoctodb.samples
 import scala.compiletime.constValue
 import scala.compiletime.error
 import scala.reflect.ClassTag
+import scala.compiletime.ops.boolean.{ &&, || }
 
 //https://mhammons.hashnode.dev/metadata-types-with-scala-3
 object GenericRecords2:
