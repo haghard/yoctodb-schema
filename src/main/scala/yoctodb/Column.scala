@@ -12,6 +12,8 @@ import scala.annotation.implicitNotFound
 
 import scala.compiletime.constValue
 import scala.compiletime.error
+import scala.compiletime.ops.boolean.&&
+import scala.compiletime.ops.boolean.||
 
 import CEntry.*
 
@@ -58,10 +60,27 @@ object Column:
 
   // Is Column[GameFullStage & GameAwayTeam] is a subtype of Column[GameAwayTeam]
   // Is Column[GameAwayTeam] is a supertype Column[GameFullStage & GameAwayTeam]
-  implicitly[Column[GameFullStage & GameAwayTeam] <:< Column[GameAwayTeam]]
+  summon[Column[GameFullStage & GameAwayTeam] <:< Column[GameAwayTeam]]
 
   // fails to generate ev: NotGiven because Column[GameAwayTeam] is a supertype of Column[GameFullStage & GameAwayTeam]
   // implicitly[scala.util.NotGiven[Column[GameFullStage & GameAwayTeam] <:< Column[GameAwayTeam]]]
+
+  type IsReq[C <: CEntry[?], E <: CEntry[?]] <: Boolean =
+    (C, E) match
+      case (GameAwayTeam, GameHomeTeam) => true
+      case (GameHomeTeam, GameAwayTeam) => true
+      case _                            => false
+
+  type ContainsRequiredColumns[Schema <: Column[?]] <: Boolean =
+    Schema match
+      case Column[GameAwayTeam & GameHomeTeam] => true
+      case _                                   => false
+
+  type IsEmpty[S <: String] <: Boolean = S match
+    case "" => true
+    case _  => false
+
+  // summon[IsEmpty[""] =:= true]
 
   def apply[A <: CEntry[?]](value: A)(using tag: Tag[A]): Column[A] =
     new Column(Map(tag -> value), Set(value.columnName))
@@ -100,9 +119,13 @@ object Column:
 
     inline def build(
       )(using
-        @implicitNotFound("Required columns constraint error")
-        ev: Schema <:< Column[yoctodb.CEntry.GameAwayTeam & yoctodb.CEntry.GameHomeTeam]
-      ): Unit = println(s"$ev = Valid!")
+        @implicitNotFound("Required columns (GameAwayTeam & GameHomeTeam) constraint error!")
+        ev: Schema <:< Column[GameAwayTeam & GameHomeTeam]
+      ): Schema = schema
+
+    inline def valid(): Schema =
+      inline if constValue[ContainsRequiredColumns[Schema]] then schema
+      else error("Required columns (GameAwayTeam & GameHomeTeam) constraint error!")
 
     /*
       2.13.8
