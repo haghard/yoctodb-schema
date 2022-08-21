@@ -10,6 +10,9 @@ import yoctodb.schema.games.v1.GamesSchema.*
 
 import scala.annotation.implicitNotFound
 
+import scala.compiletime.constValue
+import scala.compiletime.error
+
 import CEntry.*
 
 final case class Column[+A <: CEntry[?]] private (
@@ -95,7 +98,7 @@ object Column:
         schema.columnNames ++ that.columnNames,
       ).asInstanceOf[Schema & Column[B]]
 
-    def build(
+    inline def build(
       )(using
         @implicitNotFound("Required columns constraint error")
         ev: Schema <:< Column[yoctodb.CEntry.GameAwayTeam & yoctodb.CEntry.GameHomeTeam]

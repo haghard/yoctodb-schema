@@ -45,13 +45,13 @@ object GenericRecords2:
     * Construct a value of the appropriate type, which is computed using the match type `Combine`.
     */
   val unitAndString: Combine[Unit, String] = "bla"
-  implicitly[Combine[Unit, String] =:= String]
+  summon[Combine[Unit, String] =:= String]
 
   val unitAndString1: Combine[Int, Unit] = 1
-  implicitly[Combine[Int, Unit] =:= Int]
+  summon[Combine[Int, Unit] =:= Int]
 
   val unitAndString2: Combine[String, Double] = ("bla", 1)
-  implicitly[Combine[String, Double] =:= (String, Double)]
+  summon[Combine[String, Double] =:= (String, Double)]
 
   type ElementType[X] = X match
     case String      => Char
@@ -66,14 +66,21 @@ object GenericRecords2:
     case IterableOnce[t] => t
     case _               => X
 
+  type IsEmpty[S <: String] <: Boolean = S match
+    case "" => true
+    case _  => false
+
+  summon[IsEmpty[""] =:= true]
+  summon[IsEmpty["hi"] =:= false]
+
   val char: E[String] = 'c'
   val doub: E[List[Double]] = 1.0
   val num: E[Array[Double]] = 2.0
   val tupl: E[Option[(Int, Double)]] = (1, 2.0)
 
-  implicitly[E[String] =:= Char]
-  implicitly[E[Array[Int]] =:= Int]
-  implicitly[E[List[Float]] =:= Float]
+  summon[E[String] =:= Char]
+  summon[E[Array[Int]] =:= Int]
+  summon[E[List[Float]] =:= Float]
   implicitly[E[Nil.type] =:= Nothing]
 
   type HasKey[T <: Tuple, U] <: Boolean =
@@ -88,6 +95,25 @@ object GenericRecords2:
     case EmptyTuple => EmptyTuple
 
   type Column[T <: Tuple, U] = U *: Rem[T, U]
+
+  // https://youtu.be/6OaW-_aFStA, // GADTs in Dotty
+  /*import compiletime.ops.int.{ +, - }
+  enum Vec[L <: Int, +T]:
+    self =>
+    case Nil extends Vec[0, Nothing]
+    case NotNil[T]() extends Vec[Int, T]
+
+    def tail: Vec[L - 1, T] = ???
+    def head: T = ???
+
+    def map[S](f: T => S): Vec[L, S] =
+      this match
+        case Vec.Nil => Vec.Nil
+        case _       => f(self.head) :: self.tail.map(f)
+
+    def ::[S >: T](x: S): Vec[L + 1, T] = ???
+
+  end Vec*/
 
   // Defines a mapping between protoc tag and ops allowed on this column
   // Match types
