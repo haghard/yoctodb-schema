@@ -66,6 +66,9 @@ libraryDependencies ++= Seq(
 
   "com.softwaremill.magnolia1_3" %% "magnolia" % "1.1.4",
 
+  //Patch
+  "com.softwaremill.quicklens" %% "quicklens"  % "1.8.8",
+
   //Boilerplate Free Validations Using Scala 3 - Tamer Abdulradi: https://youtu.be/y2j-oZ8uHuo
   //https://github.com/tabdulradi/mazboot
   "com.abdulradi" %% "mazboot-types" % "0.5.0",
@@ -76,6 +79,12 @@ libraryDependencies ++= Seq(
   //"io.github.arainko" %% "ducktape" % "0.0.13",
 
   "com.github.mvv.sager" %% "sager" % "0.2-M1",
+
+
+  //https://github.com/arainko/ducktape
+  //https://medium.com/scalac/inline-your-boilerplate-harnessing-scala-3-metaprogramming-without-macros-c106ef8d6dfb
+  "io.github.arainko" %% "ducktape" % "0.0.13",
+
 
   "com.thesamet.scalapb" %% "scalapb-runtime" % scalapb.compiler.Version.scalapbVersion % "protobuf",
 

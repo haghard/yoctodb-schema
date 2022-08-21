@@ -79,7 +79,7 @@ object Column:
         @implicitNotFound("A duplicate column!")
         ev: scala.util.NotGiven[
           schema.type <:< Column[B]
-        ] // the ev will be generated only if that is not a subtype of Schema
+        ] // the ev will be generated only if `that` is not a subtype of Schema
         // ev: scala.util.NotGiven[Schema <:< Column[B]]
       ): Schema & Column[B] = union(that)
 
@@ -94,6 +94,12 @@ object Column:
         (schema.underlying ++ that.underlying).asInstanceOf[Map[Tag[?], CEntry[?]]],
         schema.columnNames ++ that.columnNames,
       ).asInstanceOf[Schema & Column[B]]
+
+    def build(
+      )(using
+        @implicitNotFound("Required columns constraint error")
+        ev: Schema <:< Column[yoctodb.CEntry.GameAwayTeam & yoctodb.CEntry.GameHomeTeam]
+      ): Unit = println(s"$ev = Valid!")
 
     /*
       2.13.8
