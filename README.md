@@ -73,3 +73,9 @@ https://medium.com/scalac/inline-your-boilerplate-harnessing-scala-3-metaprogram
 https://github.com/arainko/ducktape
 
 "io.github.arainko" %% "ducktape" % "0.0.13",
+
+
+
+https://slides.com/olegnizhnik/profdata
+https://mhammons.hashnode.dev/containers
+https://slides.com/olegnizhnik/scala-3#/1/4

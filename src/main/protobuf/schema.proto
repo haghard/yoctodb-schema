@@ -96,3 +96,15 @@ message NbaResultPB {
   string homeScoreLine = 6;
   string awayScoreLine = 7;
 }
+
+enum TypeTag {
+  SetUserIdTag=0;
+  AddSiblingTag=1;
+  RmSiblingTag=2;
+  AddPermissionTag=3;
+}
+
+message UserPatchPB {
+  TypeTag typeTag = 1;
+  bytes payload = 2;
+}

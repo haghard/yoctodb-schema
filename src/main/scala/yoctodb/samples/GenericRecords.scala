@@ -20,6 +20,7 @@ import yoctodb.*
 import yoctodb.schema.games.v1.GamesSchema
 import yoctodb.schema.games.v1.GamesSchema.*
 
+//https://www.scala-lang.org/2021/02/26/tuples-bring-generic-programming-to-scala-3.html
 //Another take on generic records: https://gist.github.com/johnynek/1e3cbddf461bd3da9b00e2f4f126c253
 object GenericRecords:
 
@@ -42,6 +43,9 @@ object GenericRecords:
       val zero: Rec[EmptyTuple] = Map.empty
 
       extension [A <: Tuple](schema: Rec[A])
+        def term[K <: Pcolumn & Singleton](key: K): HasKey[A, K] =
+          apply[K](key)
+
         def apply[K <: Pcolumn & Singleton](key: K): HasKey[A, K] =
           schema(key).asInstanceOf[HasKey[A, K]]
 
@@ -81,7 +85,6 @@ object GenericRecords:
       val columnName = getName(gameTime)
       val descOrd = desc(columnName)
       val ascOrd = asc(columnName)
-
     }) +
       (year -> new BothNums[Int] {
         val columnName = getName(year)
@@ -117,7 +120,6 @@ object GenericRecords:
         def in$(months: Set[Int]) = multiEquality(columnName, months.map(from(_)).toSeq*)
         val descOrd: Order = desc(columnName)
         val ascOrd: Order = asc(columnName)
-
       })
 
   /*: Rec[(aTeam.type, FilterableChars[String]) *: (stage.type, BothNums[Int]) *: (time.type, SortableNum[Long]) *: EmptyTuple]*/
@@ -157,6 +159,7 @@ object GenericRecords:
   def main(args: Array[String]) =
 
     val stageTerm: BothNums[Int] = filterableSchema(stage)
+    val stageTerm2: BothNums[Int] = filterableSchema.term(stage)
     val aTeamTerm: FilterableChars[String] = filterableSchema(aTeam)
     val hTeamTerm: FilterableChars[String] = filterableSchema(hTeam)
     val gTimeTerm: SortableNum[Long] = sortableSchema(gameTime)

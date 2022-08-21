@@ -77,14 +77,18 @@ object Column:
         that: Column[B]
       )(using
         @implicitNotFound("A duplicate column!")
-        ev: scala.util.NotGiven[Schema <:< Column[B]]
+        ev: scala.util.NotGiven[
+          schema.type <:< Column[B]
+        ] // the ev will be generated only if that is not a subtype of Schema
+        // ev: scala.util.NotGiven[Schema <:< Column[B]]
       ): Schema & Column[B] = union(that)
 
     infix def union[B <: CEntry[?]](
         that: Column[B]
       )(using
         @implicitNotFound("A duplicate column!")
-        ev: scala.util.NotGiven[Schema <:< Column[B]]
+        ev: scala.util.NotGiven[schema.type <:< Column[B]]
+        // ev: scala.util.NotGiven[Schema <:< Column[B]]
       ): Schema & Column[B] =
       new Column(
         (schema.underlying ++ that.underlying).asInstanceOf[Map[Tag[?], CEntry[?]]],
