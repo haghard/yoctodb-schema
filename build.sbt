@@ -43,7 +43,7 @@ lazy val commonSettings = scalac3Settings ++ Seq(
 
   //sbt headerCreate
   licenses += ("Apache-2.0", new URL("https://www.apache.org/licenses/LICENSE-2.0.txt")),
-  scalaVersion := "3.1.3",
+  scalaVersion := "3.2.0",
   headerMappings := headerMappings.value + (HeaderFileType.scala -> HeaderCommentStyle.cppStyleLineComment),
   headerLicense  := Some(HeaderLicense.Custom(
     """|Copyright (c) 2021-22 by Vadim Bondarev
@@ -59,15 +59,15 @@ unmanagedBase := baseDirectory.value / "lib"
 
 libraryDependencies ++= Seq(
   "com.typesafe"       %  "config"          % "1.4.2",
-  "ch.qos.logback"     %  "logback-classic" % "1.2.11",
+  "ch.qos.logback"     %  "logback-classic" % "1.4.0",
   "com.yandex.yoctodb" %  "yoctodb-core"    % "0.0.20",
 
-  "dev.zio"   %% "izumi-reflect" % "2.1.0",
+  "dev.zio"   %% "izumi-reflect" % "2.2.0",
 
-  "com.softwaremill.magnolia1_3" %% "magnolia" % "1.1.4",
+  "com.softwaremill.magnolia1_3" %% "magnolia" % "1.1.5",
 
   //Patch
-  "com.softwaremill.quicklens" %% "quicklens"  % "1.8.8",
+  "com.softwaremill.quicklens" %% "quicklens"  % "1.8.10",
 
   //Boilerplate Free Validations Using Scala 3 - Tamer Abdulradi: https://youtu.be/y2j-oZ8uHuo
   //https://github.com/tabdulradi/mazboot
@@ -83,7 +83,7 @@ libraryDependencies ++= Seq(
 
   //https://github.com/arainko/ducktape
   //https://medium.com/scalac/inline-your-boilerplate-harnessing-scala-3-metaprogramming-without-macros-c106ef8d6dfb
-  "io.github.arainko" %% "ducktape" % "0.0.13",
+  "io.github.arainko" %% "ducktape" % "0.0.14",
 
 
   "com.thesamet.scalapb" %% "scalapb-runtime" % scalapb.compiler.Version.scalapbVersion % "protobuf",

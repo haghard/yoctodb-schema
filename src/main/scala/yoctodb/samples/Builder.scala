@@ -1,10 +1,12 @@
 package yoctodb.samples
 
-import scala.compiletime.ops.boolean.{ &&, || }
-import scala.compiletime.{ constValue, error }
-import scala.annotation.targetName
-import java.nio.file.Path
 import java.net.URI
+import java.nio.file.Path
+import scala.annotation.targetName
+import scala.compiletime.constValue
+import scala.compiletime.error
+import scala.compiletime.ops.boolean.&&
+import scala.compiletime.ops.boolean.||
 
 /*
 An example use case: Enhanced builder pattern

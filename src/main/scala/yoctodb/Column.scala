@@ -119,7 +119,7 @@ object Column:
 
     inline def build(
       )(using
-        @implicitNotFound("Required columns (GameAwayTeam & GameHomeTeam) constraint error!")
+        @implicitNotFound("Required at-least GameAwayTeam and GameHomeTeam columns.")
         ev: Schema <:< Column[GameAwayTeam & GameHomeTeam]
       ): Schema = schema
 

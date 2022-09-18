@@ -131,33 +131,28 @@ object GenericRecords2:
 
   def column[T <: Pcolumn](v: T): Term[T] = v match
     case c: Pcolumn.Stage =>
-      new FilterableChars[String] {
+      new FilterableChars[String]:
         def eq$(stageName: String) = equality(getName(c), from(stageName))
         def in$(stages: Set[String]) = multiEquality(getName(c), stages.map(from(_)).toSeq*)
-      }
     case c: Pcolumn.HomeTeam =>
-      new FilterableChars[String] {
+      new FilterableChars[String]:
         def eq$(team: String) = equality(getName(c), from(getName(c)))
         def in$(teams: Set[String]) = multiEquality(getName(c), teams.map(from(_)).toSeq*)
-      }
     case c: Pcolumn.AwayTeam =>
-      new FilterableChars[String] {
+      new FilterableChars[String]:
         def eq$(team: String) = equality(getName(c), from(getName(c)))
         def in$(teams: Set[String]) = multiEquality(getName(c), teams.map(from(_)).toSeq*)
-      }
     case c: Pcolumn.Winner =>
-      new FilterableChars[String] {
+      new FilterableChars[String]:
         def eq$(team: String) = equality(getName(c), from(getName(c)))
         def in$(teams: Set[String]) = multiEquality(getName(c), teams.map(from(_)).toSeq*)
-      }
     case c: Pcolumn.Time =>
-      new SortableNum[Long] {
+      new SortableNum[Long]:
         val columnName = getName(c)
         val descOrd = desc(columnName)
         val ascOrd = asc(columnName)
-      }
     case c: Pcolumn.Year =>
-      new BothNums[Int] {
+      new BothNums[Int]:
         def gt$(yy: Int) = greaterThan(getName(c), from(yy))
         def gte$(yy: Int) = greaterOrEqThan(getName(c), from(yy))
         def lt$(yy: Int) = lesserThan(getName(c), from(yy))
@@ -166,9 +161,8 @@ object GenericRecords2:
         def in$(years: Set[Int]) = multiEquality(getName(c), years.map(from(_)).toSeq*)
         val descOrd: Order = desc(getName(c))
         val ascOrd: Order = asc(getName(c))
-      }
     case c: Pcolumn.Month =>
-      new BothNums[Int] {
+      new BothNums[Int]:
         def gt$(mm: Int) = greaterThan(getName(c), from(mm))
         def gte$(mm: Int) = greaterOrEqThan(getName(c), from(mm))
         def lt$(mm: Int) = lesserThan(getName(c), from(mm))
@@ -177,9 +171,8 @@ object GenericRecords2:
         def in$(mms: Set[Int]) = multiEquality(getName(c), mms.map(from(_)).toSeq*)
         val descOrd: Order = desc(getName(c))
         val ascOrd: Order = asc(getName(c))
-      }
     case c: Pcolumn.Day =>
-      new BothNums[Int] {
+      new BothNums[Int]:
         def gt$(dd: Int) = greaterThan(getName(c), from(dd))
         def gte$(dd: Int) = greaterOrEqThan(getName(c), from(dd))
         def lt$(dd: Int) = lesserThan(getName(c), from(dd))
@@ -188,7 +181,6 @@ object GenericRecords2:
         def in$(days: Set[Int]) = multiEquality(getName(c), days.map(from(_)).toSeq*)
         val descOrd: Order = desc(getName(c))
         val ascOrd: Order = asc(getName(c))
-      }
     case _: Pcolumn.Empty.type => EmptyTermOps
     // throw new NoSuchElementException
 
