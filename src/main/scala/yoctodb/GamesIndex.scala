@@ -140,7 +140,7 @@ object GamesIndex:
                 case Pcolumn.Empty       => false
             // case Index.Fake(v)     ⇒ v.companion.scalaDescriptor.name == name
             }
-            .map {
+            .map:
               case Pcolumn.Stage(v) =>
                 "[" + v.companion.scalaDescriptor.name + ":" + fieldType(v.`type`) + ":" + indType(
                   v.indexType
@@ -174,8 +174,7 @@ object GamesIndex:
                   v.indexType
                 ) + "]"
               case Pcolumn.Empty => ""
-              // case Index.Fake(v) ⇒ "[" + v.companion.scalaDescriptor.name + ":" + fieldType(v.`type`) + ":" + indType(v.indexType) + "]"
-            }
+          // case Index.Fake(v) ⇒ "[" + v.companion.scalaDescriptor.name + ":" + fieldType(v.`type`) + ":" + indType(v.indexType) + "]"
         }
         .flatten
         .mkString("\n")

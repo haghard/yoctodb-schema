@@ -79,3 +79,9 @@ https://github.com/arainko/ducktape
 https://slides.com/olegnizhnik/profdata
 https://mhammons.hashnode.dev/containers
 https://slides.com/olegnizhnik/scala-3#/1/4
+http://mark.hammons.fr/blog/containers-redux-2022-08-26.gmi
+
+https://virtuslab.com/blog/metaprogramming-in-scala-2-3/
+
+Scala 3 Type Class Auto Derivation
+https://github.com/alterationx10/bson-codecs

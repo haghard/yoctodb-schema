@@ -1,6 +1,7 @@
 import sbt._
 
-lazy val `yoctodb-schema` = (project in file(".")).settings(commonSettings)
+lazy val `yoctodb-schema` = (project in file("."))
+  .settings(commonSettings)
 
 lazy val scalac3Settings = Seq(
   //https://docs.scala-lang.org/scala3/guides/migration/options-new.html#standard-settings
@@ -12,6 +13,7 @@ lazy val scalac3Settings = Seq(
     //"-Xfatal-warnings",
     //"-Yexplicit-nulls",
     //"-Wunused",
+    //Transform exhaustivity warnings into errors
     "-Ywarn-unused",  //sfix
     "-Ykind-projector",
     "-Ysafe-init", //guards against forward access reference
@@ -27,7 +29,10 @@ lazy val commonSettings = scalac3Settings ++ Seq(
   Test / parallelExecution := false,
   run / fork := false,
 
-  Compile / console / scalacOptions --= Seq("-Wunused:_", "-Xfatal-warnings"),
+  Compile / console / scalacOptions --= Seq(
+    "-Wunused:_",
+    "-Xfatal-warnings"
+  ),
 
   //https://github.com/OOPMan/collectioneer/blob/master/build.sbt
   //https://github.com/com-lihaoyi/Ammonite/issues/1241
@@ -43,7 +48,7 @@ lazy val commonSettings = scalac3Settings ++ Seq(
 
   //sbt headerCreate
   licenses += ("Apache-2.0", new URL("https://www.apache.org/licenses/LICENSE-2.0.txt")),
-  scalaVersion := "3.2.0",
+  scalaVersion := "3.3.0",
   headerMappings := headerMappings.value + (HeaderFileType.scala -> HeaderCommentStyle.cppStyleLineComment),
   headerLicense  := Some(HeaderLicense.Custom(
     """|Copyright (c) 2021-22 by Vadim Bondarev
@@ -59,12 +64,12 @@ unmanagedBase := baseDirectory.value / "lib"
 
 libraryDependencies ++= Seq(
   "com.typesafe"       %  "config"          % "1.4.2",
-  "ch.qos.logback"     %  "logback-classic" % "1.4.0",
+  "ch.qos.logback"     %  "logback-classic" % "1.4.6",
   "com.yandex.yoctodb" %  "yoctodb-core"    % "0.0.20",
 
-  "dev.zio"   %% "izumi-reflect" % "2.2.0",
+  "dev.zio"   %% "izumi-reflect" % "2.3.0",
 
-  "com.softwaremill.magnolia1_3" %% "magnolia" % "1.1.5",
+  "com.softwaremill.magnolia1_3" %% "magnolia" % "1.2.6",
 
   //Patch
   "com.softwaremill.quicklens" %% "quicklens"  % "1.8.10",
@@ -73,6 +78,8 @@ libraryDependencies ++= Seq(
   //https://github.com/tabdulradi/mazboot
   "com.abdulradi" %% "mazboot-types" % "0.5.0",
 
+  //https://github.com/Iltotore/iron
+  //"io.github.iltotore" %% "iron" % "1.2.0",
 
   //https://medium.com/scalac/inline-your-boilerplate-harnessing-scala-3-metaprogramming-without-macros-c106ef8d6dfb
   //https://github.com/arainko/ducktape
@@ -80,18 +87,23 @@ libraryDependencies ++= Seq(
 
   "com.github.mvv.sager" %% "sager" % "0.2-M1",
 
-
   //https://github.com/arainko/ducktape
   //https://medium.com/scalac/inline-your-boilerplate-harnessing-scala-3-metaprogramming-without-macros-c106ef8d6dfb
-  "io.github.arainko" %% "ducktape" % "0.0.14",
+  "io.github.arainko" %% "ducktape" % "0.1.3",
 
+
+  //https://github.com/yoohaemin/decrel
+  //https://youtu.be/kcYgrYIbHM0
+  "com.yoohaemin" %% "decrel-core" % "0.1.0-M2", // Defines Relation and derivations
 
   "com.thesamet.scalapb" %% "scalapb-runtime" % scalapb.compiler.Version.scalapbVersion % "protobuf",
 
   //https://repo1.maven.org/maven2/com/lihaoyi/ammonite_3.0.1/2.4.0-11-5b9ff5e7/
   //https://repo1.maven.org/maven2/com/lihaoyi/ammonite_3.1.2/2.5.4-2-71d100df/
   //("com.lihaoyi" % "ammonite" % "2.5.4" % "test").cross(CrossVersion.full)
-  //("com.lihaoyi" % "ammonite" % "2.5.4-2-71d100df" % "test").cross(CrossVersion.full)
+  //("com.lihaoyi" % "ammonite" % "2.5.5-2-71d100df" % "test").cross(CrossVersion.full)
+  //"com.lihaoyi" % "ammonite" % "2.5.5-15-277624cf" % "test" cross CrossVersion.full
+  //"com.lihaoyi" % "ammonite" % "2.5.5-15-277624cf" % "test" cross CrossVersion.full
 )
 
 //Compile / scalacOptions --= Seq("-Xfatal-warnings", "-Ywarn-unused:imports", "-Yno-imports", "-deprecation")

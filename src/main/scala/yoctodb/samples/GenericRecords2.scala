@@ -250,6 +250,7 @@ object GenericRecords2:
   final class B
   final class C
 
+  // runMain yoctodb.samples.GenericRecords2
   def main(args: Array[String]) =
     // GenRec.zero.add(GT).add(HomeTeam).get[HomeTeam.type].eq$("")
     // GenRec.zero.add(CEntry.GameDay()).add(CEntry.GameTime()).get[CEntry.GameDay].term.eq$(7)
